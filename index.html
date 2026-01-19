@@ -19,6 +19,7 @@ body {
     min-height: 100vh;
     user-select: none;
 }
+
 .stats-container {
     margin-top: 20px;
     background: rgba(255,0,0,0.1);
@@ -26,8 +27,15 @@ body {
     border-radius: 20px;
     width: 85%;
 }
+
 .stats { font-size: 22px; font-weight: bold; }
-.nav-tabs { display: flex; gap: 10px; justify-content: center; }
+
+.nav-tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
 .tab-btn {
     padding: 10px 25px;
     border-radius: 12px;
@@ -36,8 +44,16 @@ body {
     color: white;
     cursor: pointer;
 }
+
 .tab-btn.active { background: #ff0000; }
-.screen { display: none; width: 100%; align-items: center; flex-direction: column; }
+
+.screen {
+    display: none;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+}
+
 .active-screen { display: flex; }
 
 #coin, #boss-img {
@@ -49,13 +65,16 @@ body {
     cursor: pointer;
     object-fit: cover;
 }
+
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     width: 90%;
     max-width: 400px;
+    margin-top: 20px;
 }
+
 .neon-btn {
     background: linear-gradient(135deg, #ff0000, #8b0000);
     border: none;
@@ -63,7 +82,9 @@ body {
     color: white;
     padding: 12px;
     font-weight: bold;
+    cursor: pointer;
 }
+
 .boss-card {
     background: rgba(60,0,0,0.5);
     border-radius: 15px;
@@ -73,7 +94,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-align: left;
 }
+
+.boss-info small {
+    display: block;
+    opacity: 0.85;
+}
+
 .hp-container {
     width: 80%;
     height: 25px;
@@ -82,6 +110,7 @@ body {
     overflow: hidden;
     margin: 10px 0;
 }
+
 #hp-bar {
     height: 100%;
     background: linear-gradient(90deg, red, pink);
@@ -94,60 +123,180 @@ body {
 <div class="stats-container">
     <div class="stats">Яйца: <span id="balance">0</span></div>
     <div class="stats">⚡ Сила: <span id="clickLvl">1</span></div>
+
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="showScreen('main', this)">ГЛАВНАЯ</button>
         <button class="tab-btn" onclick="showScreen('boss-list', this)">БОССЫ</button>
     </div>
 </div>
 
+<!-- ГЛАВНАЯ -->
 <div id="main" class="screen active-screen">
-    <img id="coin" src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/coin.jpg" onclick="clickCoin()">
-</div>
+    <img id="coin"
+         src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/andrey.png"
+         onclick="clickCoin()">
 
-<div id="boss-list" class="screen">
-<h2>АРЕНА БОССОВ</h2>
+    <div class="grid">
+        <button class="neon-btn" onclick="upgradeClick()">
+            УЛУЧШИТЬ СИЛУ<br>
+            <small>Цена: <span id="upgradeCost">10</span></small>
+        </button>
+
+        <button class="neon-btn" onclick="saveGame()">💾 СОХРАНИТЬ</button>
+    </div>
+</div>
 
 <!-- ШЕВА -->
 <div class="boss-card">
-<b>ШЕВА</b>
-<button class="neon-btn" onclick="startBossFight(
-'ШЕВА',100,50000,1,
-'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/sheva.jpg',
-'Ты слабак'
-)">В БОЙ</button>
+    <div class="boss-info">
+        <b>ШЕВА</b>
+        <small>HP: 100</small>
+        <small>Награда: 50 000</small>
+        <small>Главный смотрящий района. Не моргает.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'ШЕВА',100,50000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/sheva.jpg',
+        'Ты слабак'
+    )">В БОЙ</button>
 </div>
 
 <!-- МЕРСЕДЕС -->
 <div class="boss-card">
-<b>Мерседес</b>
-<button class="neon-btn" onclick="startBossFight(
-'Мерседес',100,15000,1,
-'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mersedes.jpg',
-'Я щас Юлию Михайловну позову'
-)">В БОЙ</button>
+    <div class="boss-info">
+        <b>Мерседес</b>
+        <small>HP: 100</small>
+        <small>Награда: 15 000</small>
+        <small>Учитель-каратель. Звонок для неё — не закон.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Мерседес',100,15000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mersedes.jpg',
+        'Я щас Юлию Михайловну позову'
+    )">В БОЙ</button>
 </div>
 
-<!-- ТРОИЦА -->
+<!-- ДИКАЯ ТРОИЦА -->
 <div class="boss-card">
-<b>Дикая троица</b>
-<button class="neon-btn" onclick="startBossFight(
-'Дикая троица',100,250000,1,
-'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/troica.jpg',
-'Сосать бомж ебанный'
-)">В БОЙ</button>
+    <div class="boss-info">
+        <b>Дикая троица</b>
+        <small>HP: 100</small>
+        <small>Награда: 250 000</small>
+        <small>Бьют втроём. Думают ноль секунд.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Дикая троица',100,250000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/troica.jpg',
+        'Сосать бомж ебанный'
+    )">В БОЙ</button>
 </div>
 
-<!-- И ОСТАЛЬНЫЕ -->
-<div class="boss-card"><b>Агаааааа</b><button class="neon-btn" onclick="startBossFight('Агаааааа',100,250000,1,'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/agaaa.jpg','Агаааааааа')">В БОЙ</button></div>
-<div class="boss-card"><b>Физик</b><button class="neon-btn" onclick="startBossFight('Физик',100,200000,1,'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/fizik.jpg','ФИИИИИИЗИИИИИК')">В БОЙ</button></div>
-<div class="boss-card"><b>Мишук</b><button class="neon-btn" onclick="startBossFight('Мишук',100,2500000,1,'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mishyk.jpg','В четверти 2 тебе поставлю')">В БОЙ</button></div>
-<div class="boss-card"><b>Мох-Ирева</b><button class="neon-btn" onclick="startBossFight('Мох-Ирева',100,1000000,1,'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/moxireva.jpg','Разнесла тебе еблище')">В БОЙ</button></div>
-<div class="boss-card"><b>Историк</b><button class="neon-btn" onclick="startBossFight('Историк',100,500000,1,'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/istorik.jpg','Фа фа фа шнейне')">В БОЙ</button></div>
-<div class="boss-card"><b>Жанна Киска</b><button class="neon-btn" onclick="startBossFight('Жанна Киска',100,500000,1,'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/jannakiska.jpg','Ну ты больной или что?')">В БОЙ</button></div>
-<div class="boss-card"><b>Ходилка бродилка</b><button class="neon-btn" onclick="startBossFight('Ходилка бродилка',100,35000,1,'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/hodilkabrodilka.jpg','Кушаем в столовой')">В БОЙ</button></div>
-
+<!-- АГААААА -->
+<div class="boss-card">
+    <div class="boss-info">
+        <b>Агаааааа</b>
+        <small>HP: 100</small>
+        <small>Награда: 250 000</small>
+        <small>Ор слышен за три района.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Агаааааа',100,250000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/agaaa.jpg',
+        'Агаааааааааааааааа'
+    )">В БОЙ</button>
 </div>
 
+<!-- ФИЗИК -->
+<div class="boss-card">
+    <div class="boss-info">
+        <b>Физик</b>
+        <small>HP: 100</small>
+        <small>Награда: 200 000</small>
+        <small>Заставит страдать даже отличников.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Физик',100,200000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/fizik.jpg',
+        'ФИИИИИИЗИИИИИК'
+    )">В БОЙ</button>
+</div>
+
+<!-- МИШУК -->
+<div class="boss-card">
+    <div class="boss-info">
+        <b>Мишук</b>
+        <small>HP: 100</small>
+        <small>Награда: 2 500 000</small>
+        <small>Помнит оценки. Никогда не забывает.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Мишук',100,2500000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mishyk.jpg',
+        'В четверти 2 тебе поставлю'
+    )">В БОЙ</button>
+</div>
+
+<!-- МОХ-ИРЕВА -->
+<div class="boss-card">
+    <div class="boss-info">
+        <b>Мох-Ирева</b>
+        <small>HP: 100</small>
+        <small>Награда: 1 000 000</small>
+        <small>Бьёт словом сильнее кулака.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Мох-Ирева',100,1000000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/moxireva.jpg',
+        'Разнесла тебе еблище'
+    )">В БОЙ</button>
+</div>
+
+<!-- ИСТОРИК -->
+<div class="boss-card">
+    <div class="boss-info">
+        <b>Иистоооорииик</b>
+        <small>HP: 100</small>
+        <small>Награда: 500 000</small>
+        <small>Говорит загадками и орёт.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Иистоооорииик',100,500000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/istorik.jpg',
+        'Фа фа фа шнейне ватафа'
+    )">В БОЙ</button>
+</div>
+
+<!-- ЖАННА КИСКА -->
+<div class="boss-card">
+    <div class="boss-info">
+        <b>Жанна Киска</b>
+        <small>HP: 100</small>
+        <small>Награда: 500 000</small>
+        <small>Моральный урон x10.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Жанна Киска',100,500000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/jannakiska.jpg',
+        'Ну ты больной или что?'
+    )">В БОЙ</button>
+</div>
+
+<!-- ХОДИЛКА БРОДИЛКА -->
+<div class="boss-card">
+    <div class="boss-info">
+        <b>Ходилка бродилка</b>
+        <small>HP: 100</small>
+        <small>Награда: 35 000</small>
+        <small>Появляется внезапно. Уходит без объяснений.</small>
+    </div>
+    <button class="neon-btn" onclick="startBossFight(
+        'Ходилка бродилка',100,35000,1,
+        'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/hodilkabrodilka.jpg',
+        'Кушаем в столовой'
+    )">В БОЙ</button>
+</div>
+
+<!-- БОЙ -->
 <div id="boss-battle" class="screen">
 <h2 id="boss-name"></h2>
 <div class="hp-container"><div id="hp-bar"></div></div>
@@ -155,46 +304,74 @@ body {
 </div>
 
 <script>
+let tg = window.Telegram.WebApp;
+tg.expand();
+
 let balance = 100;
 let clickPower = 1;
+let upgradeCost = 10;
+
 let bossHp = 0, bossMaxHp = 0, bossReward = 0, loseText = '';
 
 function showScreen(id, btn){
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active-screen'));
-document.getElementById(id).classList.add('active-screen');
-if(btn){
-document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-}
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active-screen'));
+    document.getElementById(id).classList.add('active-screen');
+    if(btn){
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+    }
 }
 
-function clickCoin(){ balance+=clickPower; update(); }
+function clickCoin(){
+    balance += clickPower;
+    update();
+}
+
+function upgradeClick(){
+    if(balance < upgradeCost) return;
+    balance -= upgradeCost;
+    clickPower++;
+    upgradeCost += 10;
+    update();
+}
 
 function startBossFight(name,hp,reward,cost,img,lose){
-if(balance<cost) return alert('Мало монет');
-balance-=cost;
-bossHp=bossMaxHp=hp;
-bossReward=reward;
-loseText=lose;
-document.getElementById('boss-name').innerText=name;
-document.getElementById('boss-img').src=img;
-updateBoss();
-showScreen('boss-battle');
+    if(balance < cost) return alert('Мало монет');
+    balance -= cost;
+    bossHp = bossMaxHp = hp;
+    bossReward = reward;
+    loseText = lose;
+    document.getElementById('boss-name').innerText = name;
+    document.getElementById('boss-img').src = img;
+    updateBoss();
+    showScreen('boss-battle');
 }
 
 function hitBoss(){
-bossHp-=clickPower;
-if(bossHp<=0){ balance+=bossReward; alert('ПОБЕДА +'+bossReward); showScreen('boss-list'); }
-updateBoss();
+    bossHp -= clickPower;
+    if(bossHp <= 0){
+        balance += bossReward;
+        alert('ПОБЕДА +' + bossReward);
+        showScreen('boss-list');
+    }
+    updateBoss();
 }
 
 function updateBoss(){
-document.getElementById('hp-bar').style.width=(bossHp/bossMaxHp*100)+'%';
+    document.getElementById('hp-bar').style.width = (bossHp / bossMaxHp * 100) + '%';
+}
+
+function saveGame(){
+    tg.CloudStorage.setItem('balance', balance.toString());
+    tg.CloudStorage.setItem('power', clickPower.toString());
+    tg.CloudStorage.setItem('cost', upgradeCost.toString());
+    alert('Сохранено');
 }
 
 function update(){
-document.getElementById('balance').innerText=balance;
-document.getElementById('clickLvl').innerText=clickPower;
+    document.getElementById('balance').innerText = balance;
+    document.getElementById('clickLvl').innerText = clickPower;
+    document.getElementById('upgradeCost').innerText = upgradeCost;
 }
 update();
 </script>
