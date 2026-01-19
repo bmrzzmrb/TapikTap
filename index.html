@@ -319,6 +319,7 @@ let balance = 0;
 let clickPower = 1;
 let upgradeCost = 10;
 let saveTimeout = null;
+let upgradePriceStep = 100
 
 // Вибрация
 function vibrate(type = 'light') {
@@ -400,8 +401,17 @@ function clickCoin() {
 function upgradeClick() {
     if (balance >= upgradeCost) {
         balance -= upgradeCost;
-        clickPower++;
-        upgradeCost = Math.round(upgradeCost * 0.2);
+        
+        // Сила качается ровно по +10
+        clickPower += 1; 
+        
+        // Цена растет линейно: 100, 200, 300, 400... 
+        // Или 1000, 1100, 1200, 1300... (смотря какая начальная цена)
+        upgradeCost = upgradeCost + upgradePriceStep;
+        
+        // По желанию: можно сделать, чтобы сам шаг цены тоже чуть-чуть рос
+        // upgradePriceStep += 10; 
+
         vibrate('medium');
         updateUI();
         saveGame();
