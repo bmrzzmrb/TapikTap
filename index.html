@@ -401,7 +401,7 @@ function upgradeClick() {
     if (balance >= upgradeCost) {
         balance -= upgradeCost;
         clickPower++;
-        upgradeCost = Math.round(upgradeCost * 1.0);
+        upgradeCost = Math.round(upgradeCost * 0.2);
         vibrate('medium');
         updateUI();
         saveGame();
