@@ -1,109 +1,304 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Block Blast Mini</title>
-<style>
-body {
-    margin: 0;
-    height: 100vh;
-    background: url('https://ltdfoto.ru/image/n08IOs') center/cover no-repeat;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    overflow: hidden;
-    user-select: none;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Clicker 2026</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            background: radial-gradient(circle, #2b0000 0%, #000 100%);
+            color: white;
+            font-family: 'Times New Roman', Roboto, sans-serif;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
 
-h1 {
-    color: white;
-    margin-top: 10px;
-}
+        .stats-container {
+            margin-top: 20px;
+            background: rgba(255, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+            width: 80%;
+        }
 
-#score {
-    color: yellow;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
+        .stats {
+            font-size: 26px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff0000;
+            margin: 5px;
+        }
 
-#game-area {
-    position: relative;
-    width: 90%;
-    height: 70%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-}
+        /* Навигация */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
 
-.block {
-    width: 60px;
-    height: 60px;
-    margin: 5px;
-    background-color: rgba(255,255,255,0.8);
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: #333;
-    user-select: none;
-    transition: transform 0.1s;
-}
+        .tab-btn {
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: 1px solid #ff0000;
+            background: #1a0000;
+            color: white;
+            cursor: pointer;
+        }
 
-.block:active {
-    transform: scale(0.8);
-}
-</style>
+        .tab-btn.active {
+            background: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        /* Экраны */
+        .screen { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .active-screen { display: flex; }
+
+        /* Контейнер для фото-монеты */
+        .coin-wrapper { margin: 40px 0; position: relative; }
+        #coin, #boss-img {
+            width: 240px; height: 240px;
+            border-radius: 50%;
+            border: 5px solid #ff0000;
+            box-shadow: 0 0 30px #ff0000;
+            cursor: pointer;
+            object-fit: cover;
+            transition: transform 0.1s ease;
+        }
+        #coin:active, #boss-img:active { transform: scale(0.92); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .neon-btn {
+            background: linear-gradient(135deg, #ff0000 0%, #8b0000 100%);
+            border: 2px solid #ff4d4d;
+            border-radius: 12px;
+            color: white;
+            padding: 12px 5px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* Список Боссов */
+        .boss-card {
+            background: rgba(40, 0, 0, 0.6);
+            border: 1px solid #ff0000;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px;
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Полоска здоровья */
+        .hp-container {
+            width: 80%;
+            height: 20px;
+            background: #330000;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #ff0000;
+            overflow: hidden;
+        }
+        #hp-bar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #ff0000, #8b0000);
+            transition: width 0.2s;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Block Blast Mini</h1>
-<div id="score">Очки: 0</div>
-<div id="game-area"></div>
+    <div class="stats-container">
+        <div class="stats">Монеты: <span id="balance">0</span></div>
+        <div class="stats" style="font-size: 16px; opacity: 0.9;">⚡ Урон: <span id="clickLvl">1</span></div>
+        
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showScreen('main-game', this)">ГЛАВНАЯ</button>
+            <button class="tab-btn" onclick="showScreen('boss-list', this)">БОССЫ</button>
+        </div>
+    </div>
 
-<script>
-const gameArea = document.getElementById('game-area');
-const scoreEl = document.getElementById('score');
-let score = 0;
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <div id="main-game" class="screen active-screen">
+        <div class="coin-wrapper">
+            <!-- Прямая ссылка на фото Андрея -->
+            <img src="https://i.ibb.co" id="coin" onclick="clickCoin()" alt="Coin">
+        </div>
+        <div class="grid">
+            <button class="neon-btn" onclick="upgradeClick()">Прокачка<br><small id="upCost">След: 100</small></button>
+            <button class="neon-btn" onclick="buyDouble()">x2 Клик<br><small>10,000</small></button>
+            <button class="neon-btn" onclick="saveToCloud()">💾 Сохранить</button>
+        </div>
+    </div>
 
-// Создаём 20 блоков
-for (let i = 0; i < 20; i++) {
-    const block = document.createElement('div');
-    block.classList.add('block');
-    block.innerText = i + 1;
-    gameArea.appendChild(block);
+    <!-- СПИСОК БОССОВ -->
+    <div id="boss-list" class="screen">
+        <h2 style="color: #ff4d4d; text-shadow: 0 0 10px #ff0000;">СПИСОК БОССОВ</h2>
+        <div class="boss-card">
+            <div style="text-align: left;">
+                <b style="font-size: 20px;">ШЕВА</b><br>
+                HP: 25,000 | Награда: 50к
+            </div>
+            <!-- Добавлена прямая ссылка на фото Шевы в вызов функции -->
+            <button class="neon-btn" style="padding: 10px;" onclick="startBossFight('Шева', 25000, 50000, 10000, 'https://i.ibb.co')">В БОЙ<br><small>10,000 🪙</small></button>
+        </div>
+        <p style="opacity: 0.5;">Новые боссы появятся скоро...</p>
+    </div>
 
-    block.addEventListener('click', () => {
-        block.style.display = 'none';
-        score++;
-        scoreEl.innerText = `Очки: ${score}`;
-    });
-}
+    <!-- ЭКРАН БОЯ -->
+    <div id="boss-battle" class="screen">
+        <h2 id="boss-name-title">БОСС: ШЕВА</h2>
+        <div id="timer" style="font-size: 24px; color: #ff0000; font-weight: bold;">01:00</div>
+        <div class="hp-container">
+            <div id="hp-bar"></div>
+        </div>
+        <div style="margin-bottom: 10px;">HP: <span id="current-hp">0</span> / <span id="max-hp">0</span></div>
+        <!-- Этому img тегу src присваивается в JavaScript при начале боя -->
+        <img src="" id="boss-img" onclick="dealDamageToBoss()">
+        <p>КЛИКАЙ БЫСТРО!</p>
+    </div>
 
-// Новые блоки каждые 2 секунды
-setInterval(() => {
-    const block = document.createElement('div');
-    block.classList.add('block');
-    block.innerText = Math.floor(Math.random() * 100);
-    gameArea.appendChild(block);
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-    block.addEventListener('click', () => {
-        block.style.display = 'none';
-        score++;
-        scoreEl.innerText = `Очки: ${score}`;
-    });
+        let balance = 0;
+        let clickPower = 1;
+        let upgradeCost = 100;
+        let multiplier = 1;
 
-    // Ограничим количество блоков
-    if (gameArea.children.length > 30) {
-        gameArea.removeChild(gameArea.children[0]);
-    }
-}, 2000);
-</script>
+        let currentBoss = null;
+        let bossHp = 0;
+        let bossMaxHp = 0;
+        let bossReward = 0;
+        let battleTimer = null;
+        let timeLeft = 60;
 
+        function showScreen(screenId, btn) {
+            if(battleTimer) return;
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+            document.getElementById(screenId).classList.add('active-screen');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+        }
+
+        function clickCoin() {
+            balance += (clickPower * multiplier);
+            tg.HapticFeedback.impactOccurred('medium');
+            updateUI();
+        }
+
+        function startBossFight(name, hp, reward, cost, imgUrl) {
+            if (balance < cost) {
+                tg.showAlert("Нужно " + cost + " монет для вызова!");
+                return;
+            }
+            balance -= cost;
+            currentBoss = name;
+            bossMaxHp = hp;
+            bossHp = hp;
+            bossReward = reward;
+            timeLeft = 60;
+
+            document.getElementById('boss-name-title').innerText = "БОСС: " + name;
+            document.getElementById('boss-img').src = imgUrl; // Устанавливаем фото босса
+            document.getElementById('max-hp').innerText = hp;
+            updateBossUI();
+
+            showScreen('boss-battle');
+            
+            battleTimer = setInterval(() => {
+                timeLeft--;
+                let mins = Math.floor(timeLeft / 60);
+                let secs = timeLeft % 60;
+                document.getElementById('timer').innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                
+                if (timeLeft <= 0) endBattle(false);
+            }, 1000);
+            updateUI();
+        }
+
+        function dealDamageToBoss() {
+            let damage = clickPower * multiplier;
+            bossHp -= damage;
+            tg.HapticFeedback.impactOccurred('heavy');
+            
+            if (bossHp <= 0) {
+                bossHp = 0;
+                endBattle(true);
+            }
+            updateBossUI();
+        }
+
+        function updateBossUI() {
+            document.getElementById('current-hp').innerText = Math.floor(bossHp);
+            let percent = (bossHp / bossMaxHp) * 100;
+            document.getElementById('hp-bar').style.width = percent + "%";
+        }
+
+        function endBattle(isWin) {
+            clearInterval(battleTimer);
+            battleTimer = null;
+            
+            if (isWin) {
+                balance += bossReward;
+                tg.showAlert("ПОБЕДА! Вы получили " + bossReward + " монет!");
+            } else {
+                tg.showAlert("ВРЕМЯ ВЫШЛО! Босс сбежал.");
+            }
+            
+            showScreen('boss-list');
+            updateUI();
+        }
+
+        function upgradeClick() {
+            if (balance >= upgradeCost) {
+                balance -= upgradeCost;
+                clickPower++;
+                upgradeCost = Math.floor(upgradeCost * 1.2);
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('balance').innerText = Math.floor(balance).toLocaleString();
+            document.getElementById('clickLvl').innerText = clickPower;
+            document.getElementById('upCost').innerText = "Цена: " + upgradeCost.toLocaleString();
+        }
+
+        function saveToCloud() {
+            tg.CloudStorage.setItem('coins', balance.toString());
+            tg.CloudStorage.setItem('lvl', clickPower.toString());
+            tg.showAlert("Прогресс сохранен!");
+        }
+
+        tg.CloudStorage.getItems(['coins', 'lvl'], (err, values) => {
+            if (values.coins) balance = parseInt(values.coins);
+            if (values.lvl) clickPower = parseInt(values.lvl);
+            updateUI();
+        });
+    </script>
 </body>
 </html>
