@@ -27,53 +27,56 @@
             border-radius: 20px;
             border: 1px solid rgba(255, 0, 0, 0.3);
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
-            width: 80%;
+            width: 85%;
         }
 
         .stats {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             text-shadow: 0 0 10px #ff0000;
             margin: 5px;
         }
 
-        /* Навигация */
         .nav-tabs {
             display: flex;
             gap: 10px;
             margin-top: 15px;
+            justify-content: center;
         }
 
         .tab-btn {
-            padding: 8px 20px;
-            border-radius: 10px;
+            padding: 10px 25px;
+            border-radius: 12px;
             border: 1px solid #ff0000;
             background: #1a0000;
             color: white;
             cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
         .tab-btn.active {
             background: #ff0000;
-            box-shadow: 0 0 10px #ff0000;
+            box-shadow: 0 0 15px #ff0000;
         }
 
-        /* Экраны */
         .screen { display: none; width: 100%; flex-direction: column; align-items: center; }
         .active-screen { display: flex; }
 
-        /* Контейнер для фото-монеты */
-        .coin-wrapper { margin: 40px 0; position: relative; }
+        .coin-wrapper { margin: 30px 0; }
+        
         #coin, #boss-img {
-            width: 240px; height: 240px;
+            width: 220px; 
+            height: 220px;
             border-radius: 50%;
-            border: 5px solid #ff0000;
+            border: 4px solid #ff0000;
             box-shadow: 0 0 30px #ff0000;
             cursor: pointer;
             object-fit: cover;
-            transition: transform 0.1s ease;
+            transition: transform 0.05s ease;
         }
-        #coin:active, #boss-img:active { transform: scale(0.92); }
+
+        #coin:active, #boss-img:active { transform: scale(0.90); }
 
         .grid {
             display: grid;
@@ -90,49 +93,57 @@
             border-radius: 12px;
             color: white;
             padding: 12px 5px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
             cursor: pointer;
             text-transform: uppercase;
         }
 
-        /* Список Боссов */
         .boss-card {
-            background: rgba(40, 0, 0, 0.6);
-            border: 1px solid #ff0000;
+            background: rgba(60, 0, 0, 0.4);
+            border: 1px solid #ff4d4d;
             border-radius: 15px;
             padding: 15px;
             margin: 10px;
-            width: 80%;
+            width: 85%;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* Полоска здоровья */
         .hp-container {
             width: 80%;
-            height: 20px;
-            background: #330000;
-            border-radius: 10px;
-            margin: 10px 0;
-            border: 1px solid #ff0000;
+            height: 25px;
+            background: #220000;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 2px solid #ff0000;
             overflow: hidden;
+            position: relative;
         }
+
         #hp-bar {
             width: 100%;
             height: 100%;
-            background: linear-gradient(to right, #ff0000, #8b0000);
-            transition: width 0.2s;
+            background: linear-gradient(90deg, #ff0000, #ff6666);
+            transition: width 0.1s linear;
+        }
+
+        #timer {
+            font-size: 32px;
+            color: #ff4d4d;
+            font-weight: bold;
+            text-shadow: 0 0 10px #000;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
 
     <div class="stats-container">
-        <div class="stats">Монеты: <span id="balance">0</span></div>
-        <div class="stats" style="font-size: 16px; opacity: 0.9;">⚡ Урон: <span id="clickLvl">1</span></div>
+        <div class="stats">Яйца: <span id="balance">0</span></div>
+        <div class="stats" style="font-size: 16px; opacity: 0.9;">⚡ Сила: <span id="clickLvl">1</span></div>
         
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="showScreen('main-game', this)">ГЛАВНАЯ</button>
@@ -143,8 +154,7 @@
     <!-- ГЛАВНЫЙ ЭКРАН -->
     <div id="main-game" class="screen active-screen">
         <div class="coin-wrapper">
-            <!-- Прямая ссылка на фото Андрея -->
-            <img src="https://i.ibb.co" id="coin" onclick="clickCoin()" alt="Coin">
+            <img src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/blob/main/andrey.png" id="coin" onclick="clickCoin()">
         </div>
         <div class="grid">
             <button class="neon-btn" onclick="upgradeClick()">Прокачка<br><small id="upCost">След: 100</small></button>
@@ -155,29 +165,26 @@
 
     <!-- СПИСОК БОССОВ -->
     <div id="boss-list" class="screen">
-        <h2 style="color: #ff4d4d; text-shadow: 0 0 10px #ff0000;">СПИСОК БОССОВ</h2>
+        <h2 style="margin-top: 20px; color: #ff4d4d;">АРЕНА БОССОВ</h2>
         <div class="boss-card">
             <div style="text-align: left;">
-                <b style="font-size: 20px;">ШЕВА</b><br>
-                HP: 25,000 | Награда: 50к
+                <b style="font-size: 18px;">ШЕВА</b><br>
+                <small>HP: 25,000 | Награда: 50к</small>
             </div>
-            <!-- Добавлена прямая ссылка на фото Шевы в вызов функции -->
-            <button class="neon-btn" style="padding: 10px;" onclick="startBossFight('Шева', 25000, 50000, 10000, 'https://i.ibb.co')">В БОЙ<br><small>10,000 🪙</small></button>
+            <button class="neon-btn" onclick="startBossFight('Шева', 25000, 50000, 10, 'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/blob/main/sheva.jpg')">В БОЙ<br><small>10,000 🪙</small></button>
         </div>
-        <p style="opacity: 0.5;">Новые боссы появятся скоро...</p>
     </div>
 
     <!-- ЭКРАН БОЯ -->
     <div id="boss-battle" class="screen">
-        <h2 id="boss-name-title">БОСС: ШЕВА</h2>
-        <div id="timer" style="font-size: 24px; color: #ff0000; font-weight: bold;">01:00</div>
+        <h2 id="boss-name-title">БОСС</h2>
+        <div id="timer">01:00</div>
         <div class="hp-container">
             <div id="hp-bar"></div>
         </div>
-        <div style="margin-bottom: 10px;">HP: <span id="current-hp">0</span> / <span id="max-hp">0</span></div>
-        <!-- Этому img тегу src присваивается в JavaScript при начале боя -->
+        <div style="margin-bottom: 15px; font-weight: bold;">HP: <span id="current-hp">0</span> / <span id="max-hp">0</span></div>
         <img src="" id="boss-img" onclick="dealDamageToBoss()">
-        <p>КЛИКАЙ БЫСТРО!</p>
+        <p style="margin-top: 15px; font-style: italic;">БЕЙ ЕГО!</p>
     </div>
 
     <script>
@@ -189,19 +196,26 @@
         let upgradeCost = 100;
         let multiplier = 1;
 
-        let currentBoss = null;
+        let battleTimer = null;
         let bossHp = 0;
         let bossMaxHp = 0;
         let bossReward = 0;
-        let battleTimer = null;
         let timeLeft = 60;
+
+        function updateUI() {
+            document.getElementById('balance').innerText = Math.floor(balance).toLocaleString();
+            document.getElementById('clickLvl').innerText = clickPower;
+            document.getElementById('upCost').innerText = "Цена: " + upgradeCost.toLocaleString();
+        }
 
         function showScreen(screenId, btn) {
             if(battleTimer) return;
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
+            if(btn) {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
         }
 
         function clickCoin() {
@@ -212,39 +226,34 @@
 
         function startBossFight(name, hp, reward, cost, imgUrl) {
             if (balance < cost) {
-                tg.showAlert("Нужно " + cost + " монет для вызова!");
+                tg.showAlert("Нужно " + cost + " монет!");
                 return;
             }
             balance -= cost;
-            currentBoss = name;
             bossMaxHp = hp;
             bossHp = hp;
             bossReward = reward;
             timeLeft = 60;
 
-            document.getElementById('boss-name-title').innerText = "БОСС: " + name;
-            document.getElementById('boss-img').src = imgUrl; // Устанавливаем фото босса
-            document.getElementById('max-hp').innerText = hp;
+            document.getElementById('boss-name-title').innerText = name;
+            document.getElementById('boss-img').src = imgUrl;
+            document.getElementById('max-hp').innerText = hp.toLocaleString();
+            
             updateBossUI();
-
             showScreen('boss-battle');
             
             battleTimer = setInterval(() => {
                 timeLeft--;
-                let mins = Math.floor(timeLeft / 60);
-                let secs = timeLeft % 60;
-                document.getElementById('timer').innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                
+                let s = timeLeft;
+                document.getElementById('timer').innerText = `00:${s < 10 ? '0' : ''}${s}`;
                 if (timeLeft <= 0) endBattle(false);
             }, 1000);
             updateUI();
         }
 
         function dealDamageToBoss() {
-            let damage = clickPower * multiplier;
-            bossHp -= damage;
+            bossHp -= (clickPower * multiplier);
             tg.HapticFeedback.impactOccurred('heavy');
-            
             if (bossHp <= 0) {
                 bossHp = 0;
                 endBattle(true);
@@ -253,22 +262,20 @@
         }
 
         function updateBossUI() {
-            document.getElementById('current-hp').innerText = Math.floor(bossHp);
+            document.getElementById('current-hp').innerText = Math.floor(bossHp).toLocaleString();
             let percent = (bossHp / bossMaxHp) * 100;
             document.getElementById('hp-bar').style.width = percent + "%";
         }
 
-        function endBattle(isWin) {
+        function endBattle(win) {
             clearInterval(battleTimer);
             battleTimer = null;
-            
-            if (isWin) {
+            if (win) {
                 balance += bossReward;
-                tg.showAlert("ПОБЕДА! Вы получили " + bossReward + " монет!");
+                tg.showAlert("БОСС ПОВЕРЖЕН! + " + bossReward + " монет");
             } else {
-                tg.showAlert("ВРЕМЯ ВЫШЛО! Босс сбежал.");
+                tg.showAlert("ВРЕМЯ ВЫШЛО!");
             }
-            
             showScreen('boss-list');
             updateUI();
         }
@@ -282,21 +289,25 @@
             }
         }
 
-        function updateUI() {
-            document.getElementById('balance').innerText = Math.floor(balance).toLocaleString();
-            document.getElementById('clickLvl').innerText = clickPower;
-            document.getElementById('upCost').innerText = "Цена: " + upgradeCost.toLocaleString();
+        function buyDouble() { 
+            if(balance >= 10000) { 
+                balance -= 10000; multiplier = 2; 
+                setTimeout(() => multiplier = 1, 60000);
+                tg.showAlert("x2 Сила на 1 минуту!");
+                updateUI();
+            } 
         }
 
         function saveToCloud() {
             tg.CloudStorage.setItem('coins', balance.toString());
             tg.CloudStorage.setItem('lvl', clickPower.toString());
-            tg.showAlert("Прогресс сохранен!");
+            tg.showAlert("Сохранено!");
         }
 
-        tg.CloudStorage.getItems(['coins', 'lvl'], (err, values) => {
-            if (values.coins) balance = parseInt(values.coins);
-            if (values.lvl) clickPower = parseInt(values.lvl);
+        // Загрузка
+        tg.CloudStorage.getItems(['coins', 'lvl'], (err, val) => {
+            if (val.coins) balance = parseInt(val.coins);
+            if (val.lvl) clickPower = parseInt(val.lvl);
             updateUI();
         });
     </script>
