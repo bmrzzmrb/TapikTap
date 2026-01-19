@@ -2,119 +2,86 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tap Coin 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TapikTap</title>
+    <!-- ПОДКЛЮЧАЕМ SDK -->
     <script src="https://telegram.org"></script>
     <style>
         body {
-            background: radial-gradient(circle, #1e3c72, #2a5298);
-            color: white; font-family: 'Arial', sans-serif;
-            display: flex; flex-direction: column; align-items: center;
-            height: 100vh; margin: 0; overflow: hidden; user-select: none;
+            margin: 0; padding: 0; background: linear-gradient(135deg, #0f0c29, #302b63);
+            color: white; font-family: sans-serif; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; height: 100vh; overflow: hidden;
+            touch-action: none; user-select: none;
         }
-        .header { margin-top: 30px; font-size: 32px; font-weight: bold; }
         #coin {
-            width: 220px; height: 220px; border-radius: 50%;
-            background: linear-gradient(#f1c40f, #f39c12);
-            border: 8px solid #d35400; margin: 50px 0;
-            box-shadow: 0 0 30px rgba(241, 196, 15, 0.6);
-            cursor: pointer; transition: transform 0.05s;
-            display: flex; align-items: center; justify-content: center; font-size: 80px;
+            width: 200px; height: 200px; background: gold; border-radius: 50%;
+            border: 10px solid orange; box-shadow: 0 0 20px yellow;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 80px; cursor: pointer; transition: transform 0.05s;
+            -webkit-tap-highlight-color: transparent;
         }
-        #coin:active { transform: scale(0.92); }
-        .stats { display: flex; gap: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; }
-        .bonus-group { margin-top: 20px; display: flex; gap: 10px; }
-        button {
-            padding: 10px; border: none; border-radius: 8px; font-weight: bold;
-            background: #27ae60; color: white; cursor: pointer;
-        }
-        .upgrade-btn { background: #e67e22; width: 80%; margin-top: 20px; }
+        #coin:active { transform: scale(0.9); }
+        .stat { font-size: 20px; margin: 10px; }
+        .btn { background: #27ae60; border: none; padding: 10px 20px; color: white; border-radius: 10px; margin: 5px; }
     </style>
 </head>
 <body>
-    <div class="header" id="balance">0</div>
+    <div class="stat">Баланс: <span id="balance">0</span></div>
+    <div class="stat">Энергия: <span id="energy">1000</span></div>
+    
     <div id="coin">🪙</div>
 
-    <div class="stats">
-        <div>⚡ Энергия: <span id="energy">1000</span></div>
-        <div>💪 Сила: <span id="tap-power">1</span></div>
+    <div style="display:flex">
+        <button class="btn" onclick="buyUpgrade()">Апгрейд (Цена: <span id="price">10</span>)</button>
     </div>
-
-    <div class="bonus-group">
-        <button onclick="useBonus('x2')">x2 Сила (1ч)</button>
-        <button onclick="useBonus('shield')">Щит (1ч)</button>
-    </div>
-
-    <button class="upgrade-btn" onclick="upgrade()">Улучшить клик (Цена: <span id="upg-cost">10</span>)</button>
 
     <script>
+        // ИНИЦИАЛИЗАЦИЯ
         const tg = window.Telegram.WebApp;
+        tg.ready();
         tg.expand();
 
         let balance = 0;
         let energy = 1000;
-        let tapPower = 1;
-        let upgradeCost = 10;
-        let isX2 = false;
-        let isShield = false;
+        let power = 1;
+        let price = 10;
 
-        // Логика клика
-        document.getElementById('coin').addEventListener('pointerdown', (e) => {
-            if (energy <= 0) return;
+        const coin = document.getElementById('coin');
 
-            // Вероятность "Мяч в лицо" (5%)
-            if (!isShield && Math.random() < 0.05) {
-                balance = Math.max(0, balance - 50);
-                tg.HapticFeedback.notificationOccurred('error');
-            } else {
-                let gain = isX2 ? tapPower * 2 : tapPower;
-                balance += gain;
+        // Используем pointerdown для мгновенного срабатывания
+        coin.addEventListener('pointerdown', (e) => {
+            if (energy > 0) {
+                balance += power;
                 energy -= 1;
-                tg.HapticFeedback.impactOccurred('medium');
+                tg.HapticFeedback.impactOccurred('medium'); // Вибрация
+                update();
             }
-            updateUI();
         });
 
-        // Апгрейд (по ТЗ: каждый уровень на 10 монет дороже)
-        function upgrade() {
-            if (balance >= upgradeCost && tapPower < 10000) {
-                balance -= upgradeCost;
-                tapPower += 1;
-                upgradeCost += 10; 
-                updateUI();
+        function buyUpgrade() {
+            if (balance >= price && power < 10000) {
+                balance -= price;
+                power += 1;
+                price += 10;
+                update();
             }
         }
 
-        // Бонусы
-        function useBonus(type) {
-            if (type === 'x2') {
-                isX2 = true;
-                setTimeout(() => { isX2 = false; }, 3600000);
-            } else {
-                isShield = true;
-                setTimeout(() => { isShield = false; }, 3600000);
-            }
-            alert("Бонус активирован!");
-        }
-
-        // Обновление UI
-        function updateUI() {
-            document.getElementById('balance').innerText = Math.floor(balance);
+        function update() {
+            document.getElementById('balance').innerText = balance;
             document.getElementById('energy').innerText = energy;
-            document.getElementById('tap-power').innerText = isX2 ? tapPower + " (x2)" : tapPower;
-            document.getElementById('upg-cost').innerText = upgradeCost;
+            document.getElementById('price').innerText = price;
         }
 
-        // Сброс энергии в 00:00 по МСК
-        function resetEnergyAtMidnight() {
+        // Энергия в 00:00 МСК (2026 год)
+        setInterval(() => {
             const now = new Date();
-            const mskTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Moscow"}));
-            if (mskTime.getHours() === 0 && mskTime.getMinutes() === 0) {
+            const msk = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Moscow"}));
+            if (msk.getHours() === 0 && msk.getMinutes() === 0) {
                 energy = 1000;
-                updateUI();
+                update();
             }
-        }
-        setInterval(resetEnergyAtMidnight, 60000);
+        }, 60000);
     </script>
 </body>
 </html>
