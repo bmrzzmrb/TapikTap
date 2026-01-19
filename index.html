@@ -2,86 +2,132 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TapikTap</title>
-    <!-- ПОДКЛЮЧАЕМ SDK -->
-    <script src="https://telegram.org"></script>
+
+    <!-- ✅ ОФИЦИАЛЬНЫЙ TELEGRAM WEBAPP SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
         body {
-            margin: 0; padding: 0; background: linear-gradient(135deg, #0f0c29, #302b63);
-            color: white; font-family: sans-serif; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; height: 100vh; overflow: hidden;
-            touch-action: none; user-select: none;
+            margin: 0;
+            background: #1a1a2e;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            touch-action: none;
+            user-select: none;
         }
+
         #coin {
-            width: 200px; height: 200px; background: gold; border-radius: 50%;
-            border: 10px solid orange; box-shadow: 0 0 20px yellow;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 80px; cursor: pointer; transition: transform 0.05s;
-            -webkit-tap-highlight-color: transparent;
+            width: 180px;
+            height: 180px;
+            background: #f1c40f;
+            border-radius: 50%;
+            border: 8px solid #d35400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            cursor: pointer;
+            transition: transform 0.08s;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
         }
-        #coin:active { transform: scale(0.9); }
-        .stat { font-size: 20px; margin: 10px; }
-        .btn { background: #27ae60; border: none; padding: 10px 20px; color: white; border-radius: 10px; margin: 5px; }
+
+        #coin:active {
+            transform: scale(0.9);
+        }
+
+        .stats {
+            margin-bottom: 20px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+        }
     </style>
 </head>
+
 <body>
-    <div class="stat">Баланс: <span id="balance">0</span></div>
-    <div class="stat">Энергия: <span id="energy">1000</span></div>
-    
-    <div id="coin">🪙</div>
 
-    <div style="display:flex">
-        <button class="btn" onclick="buyUpgrade()">Апгрейд (Цена: <span id="price">10</span>)</button>
-    </div>
+<div class="stats">
+    <div>Баланс: <span id="balance">0</span></div>
+    <div>Энергия: <span id="energy">1000</span></div>
+</div>
 
-    <script>
-        // ИНИЦИАЛИЗАЦИЯ
-        const tg = window.Telegram.WebApp;
+<div id="coin">🪙</div>
+
+<button onclick="upgrade()">Апгрейд (Цена: <span id="cost">10</span>)</button>
+
+<script>
+    // ✅ ИНИЦИАЛИЗАЦИЯ TELEGRAM
+    let tg = null;
+    if (window.Telegram && window.Telegram.WebApp) {
+        tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
+    }
 
-        let balance = 0;
-        let energy = 1000;
-        let power = 1;
-        let price = 10;
+    let balance = 0;
+    let energy = 1000;
+    let power = 1;
+    let cost = 10;
 
-        const coin = document.getElementById('coin');
+    const balanceEl = document.getElementById('balance');
+    const energyEl = document.getElementById('energy');
+    const costEl = document.getElementById('cost');
+    const coin = document.getElementById('coin');
 
-        // Используем pointerdown для мгновенного срабатывания
-        coin.addEventListener('pointerdown', (e) => {
-            if (energy > 0) {
-                balance += power;
-                energy -= 1;
-                tg.HapticFeedback.impactOccurred('medium'); // Вибрация
-                update();
-            }
-        });
+    coin.addEventListener('pointerdown', () => {
+        if (energy <= 0) return;
 
-        function buyUpgrade() {
-            if (balance >= price && power < 10000) {
-                balance -= price;
-                power += 1;
-                price += 10;
-                update();
-            }
+        balance += power;
+        energy--;
+
+        if (tg && tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('medium');
         }
 
-        function update() {
-            document.getElementById('balance').innerText = balance;
-            document.getElementById('energy').innerText = energy;
-            document.getElementById('price').innerText = price;
-        }
+        updateUI();
+    });
 
-        // Энергия в 00:00 МСК (2026 год)
-        setInterval(() => {
-            const now = new Date();
-            const msk = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Moscow"}));
-            if (msk.getHours() === 0 && msk.getMinutes() === 0) {
-                energy = 1000;
-                update();
-            }
-        }, 60000);
-    </script>
+    function upgrade() {
+        if (balance >= cost) {
+            balance -= cost;
+            power++;
+            cost += 10;
+            updateUI();
+        }
+    }
+
+    function updateUI() {
+        balanceEl.innerText = balance;
+        energyEl.innerText = energy;
+        costEl.innerText = cost;
+    }
+
+    // 🔋 Восстановление энергии в 00:00 МСК
+    setInterval(() => {
+        const now = new Date();
+        const msk = new Date(now.toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }));
+        if (msk.getHours() === 0 && msk.getMinutes() === 0) {
+            energy = 1000;
+            updateUI();
+        }
+    }, 60000);
+</script>
+
 </body>
 </html>
