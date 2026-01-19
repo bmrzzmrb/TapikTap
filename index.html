@@ -330,96 +330,78 @@ function vibrate(type = 'light') {
 let balance = 0;
 let clickPower = 1;
 let upgradeCost = 10;
+let saveTimeout = null; // Для предотвращения спама в облако
 
 let bossHp = 0, bossMaxHp = 0, bossReward = 0;
 let fightTimer = null;
 let timeLeft = 60;
 
-// ------------------- LocalStorage -------------------
-function saveLocal() {
-    localStorage.setItem('tapGame', JSON.stringify({
-        balance,
-        clickPower,
-        upgradeCost
-    }));
-}
-
-function loadLocal() {
-    const data = localStorage.getItem('tapGame');
-    if (data) {
-        try {
-            const parsed = JSON.parse(data);
-            balance = parsed.balance || 0;
-            clickPower = parsed.clickPower || 1;
-            upgradeCost = parsed.upgradeCost || 10;
-        } catch(e) {}
+// --- ФУНКЦИЯ ЗАГРУЗКИ (ПК + ТЕЛЕФОН) ---
+function loadGame() {
+    // 1. Сначала пробуем загрузить из локальной памяти (быстро)
+    const localData = localStorage.getItem('tapGame');
+    if (localData) {
+        const data = JSON.parse(localData);
+        balance = data.balance || 0;
+        clickPower = data.clickPower || 1;
+        upgradeCost = data.upgradeCost || 10;
+        updateUI();
     }
-}
 
-// ------------------- Загрузка игры -------------------
-async function loadGame() {
-    // Сначала localStorage
-    loadLocal();
-    updateUI();
-
-    // Потом Telegram Cloud (если есть)
+    // 2. Затем запрашиваем из Облака ТГ (надежно, для синхронизации)
     if (tg.isVersionAtLeast('6.9')) {
-        tg.CloudStorage.getItems(['balance','power','cost'], (err, values) => {
-            if (!err && values) {
-                if (values.balance) balance = parseInt(values.balance);
-                if (values.power) clickPower = parseInt(values.power);
-                if (values.cost) upgradeCost = parseInt(values.cost);
-                updateUI();
-                saveLocal(); // синхронизация с local
+        tg.CloudStorage.getItem('gameData', (err, value) => {
+            if (!err && value) {
+                const cloudData = JSON.parse(value);
+                // Если в облаке баланс больше, чем локально — берем его
+                if (cloudData.balance > balance) {
+                    balance = cloudData.balance;
+                    clickPower = cloudData.clickPower;
+                    upgradeCost = cloudData.upgradeCost;
+                    updateUI();
+                }
             }
         });
     }
 }
 
-// ------------------- Сохранение игры -------------------
-function saveGame(silent = false) {
-    saveLocal(); // всегда сохраняем в localStorage
+// --- ФУНКЦИЯ СОХРАНЕНИЯ (УМНАЯ) ---
+function saveGame() {
+    // Данные для сохранения
+    const dataToSave = {
+        balance: balance,
+        clickPower: clickPower,
+        upgradeCost: upgradeCost,
+        date: Date.now()
+    };
 
+    // Сохраняем локально (мгновенно)
+    localStorage.setItem('tapGame', JSON.stringify(dataToSave));
+
+    // Сохраняем в Облако ТГ (с задержкой, чтобы не забанили за спам)
     if (tg.isVersionAtLeast('6.9')) {
-        tg.CloudStorage.setItem('balance', balance.toString());
-        tg.CloudStorage.setItem('power', clickPower.toString());
-        tg.CloudStorage.setItem('cost', upgradeCost.toString(), () => {
-            if (!silent) tg.showAlert('✅ Сохранено!');
-        });
-    } else {
-        if (!silent) tg.showAlert('✅ Сохранено локально!');
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            tg.CloudStorage.setItem('gameData', JSON.stringify(dataToSave), (err, success) => {
+                if (err) console.log("Ошибка облака (вероятно спам):", err);
+            });
+        }, 1000); // Запись в облако произойдет через 1 сек после последнего клика
     }
 }
 
-// ------------------- UI -------------------
-function updateUI() {
-    document.getElementById('balance').innerText = balance;
-    document.getElementById('clickLvl').innerText = clickPower;
-    document.getElementById('upgradeCost').innerText = upgradeCost;
-}
+// --- ИЗМЕНЕНИЯ В ИГРОВЫХ ФУНКЦИЯХ ---
 
-function showScreen(id, btn) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-    document.getElementById(id).classList.add('active-screen');
-    if (btn) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-}
-
-// ------------------- Клик по яйцу -------------------
 function clickCoin() {
     balance += clickPower;
     vibrate('light');
     updateUI();
-    saveGame(true);
+    saveGame(); // Теперь вызывается безопасно
 
     const img = document.getElementById('coin');
     img.style.transform = 'scale(0.95)';
     setTimeout(() => img.style.transform = 'scale(1)', 50);
 }
 
-// ------------------- Улучшение клика -------------------
 function upgradeClick() {
     if (balance >= upgradeCost) {
         balance -= upgradeCost;
@@ -427,42 +409,14 @@ function upgradeClick() {
         upgradeCost = Math.round(upgradeCost * 1.5);
         vibrate('medium');
         updateUI();
-        saveGame(true);
+        saveGame();
     } else {
         vibrate('heavy');
         tg.showAlert('Мало яиц!');
     }
 }
 
-// ------------------- Босс -------------------
-function startBossFight(name, hp, reward, cost, img) {
-    if (balance < cost) return tg.showAlert('Нужно ' + cost + ' монет!');
-    balance -= cost;
-    updateUI();
-
-    bossHp = bossMaxHp = hp;
-    bossReward = reward;
-    timeLeft = 30;
-
-    document.getElementById('boss-name').innerText = name;
-    document.getElementById('boss-img').src = img;
-    document.getElementById('hp-bar').style.width = '100%';
-    
-    document.querySelector('.nav-tabs').style.display = 'none';
-    showScreen('boss-battle');
-    
-    clearInterval(fightTimer);
-    fightTimer = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').innerText = '⏱️ ' + timeLeft;
-        if (timeLeft <= 0) {
-            clearInterval(fightTimer);
-            tg.showAlert('ВРЕМЯ ВЫШЛО! 💀');
-            endFight();
-        }
-    }, 1000);
-}
-
+// В битве с боссом при победе тоже добавьте saveGame()
 function hitBoss() {
     bossHp -= clickPower;
     vibrate('light');
@@ -472,21 +426,12 @@ function hitBoss() {
         clearInterval(fightTimer);
         balance += bossReward;
         vibrate('heavy');
-        saveGame(true);
+        updateUI();
+        saveGame(); // Сохраняем награду
         tg.showAlert('ПОБЕДА! +' + bossReward);
         endFight();
     }
 }
 
-function endFight() {
-    document.querySelector('.nav-tabs').style.display = 'flex';
-    updateUI();
-    showScreen('main', document.querySelectorAll('.tab-btn')[0]);
-}
-
-// ------------------- Автосохранение каждые 30 секунд -------------------
-setInterval(() => saveGame(true), 30000);
-
-// ------------------- Старт -------------------
+// Запуск при старте
 loadGame();
-</script>
