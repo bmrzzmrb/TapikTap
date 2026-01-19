@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>TapCoin Mini App</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e); /* Красивый фон */
+            color: white; font-family: 'Arial', sans-serif;
+            display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden;
+        }
+        .header { margin-top: 20px; text-align: center; }
+        .coins { font-size: 48px; font-weight: bold; text-shadow: 0 0 10px #f1c40f; }
+        
+        #coin-btn {
+            width: 200px; height: 200px; border-radius: 50%;
+            background: radial-gradient(circle, #f1c40f, #f39c12);
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
+            border: 8px solid #d35400; cursor: pointer;
+            margin: 40px 0; transition: transform 0.1s;
+        }
+        #coin-btn:active { transform: scale(0.95); }
+
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 90%; }
+        .stat-card { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center; }
+        
+        .bonus-btns { margin-top: 20px; display: flex; gap: 10px; }
+        button.bonus { background: #27ae60; color: white; border: none; padding: 10px; border-radius: 5px; }
+        button.upgrade { background: #e67e22; color: white; border: none; padding: 10px; border-radius: 5px; width: 90%; margin-top: 10px;}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="coins" id="balance">0</div>
+        <div>Монеты</div>
+    </div>
+
+    <button id="coin-btn"></button>
+
+    <div class="stats">
+        <div class="stat-card">Энергия: <br><span id="energy">1000/1000</span></div>
+        <div class="stat-card">Сила клика: <br><span id="tap-power">1</span></div>
+    </div>
+
+    <div class="bonus-btns">
+        <button class="bonus" onclick="activateDoublePower()">x2 Сила (1ч)</button>
+        <button class="bonus" onclick="activateShield()">Щит (1ч)</button>
+    </div>
+
+    <button class="upgrade" onclick="upgradeClick()">Апгрейд клика (Цена: <span id="upg-price">10</span>)</button>
+
+    <script>
+        let balance = 0;
+        let tapPower = 1;
+        let energy = 1000;
+        let upgradePrice = 10;
+        let doublePowerActive = false;
+        let shieldActive = false;
+
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Логика клика
+        document.getElementById('coin-btn').addEventListener('click', (e) => {
+            if (energy <= 0) return;
+
+            // Вероятность "Мяч в лицо" (например 5%)
+            if (!shieldActive && Math.random() < 0.05) {
+                balance = Math.max(0, balance - 50);
+                tg.HapticFeedback.notificationOccurred('error');
+                alert("Мяч в лицо! -50 монет");
+            } else {
+                let gain = doublePowerActive ? tapPower * 2 : tapPower;
+                balance += gain;
+                energy -= 1;
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+            updateUI();
+        });
+
+        function upgradeClick() {
+            if (balance >= upgradePrice && tapPower < 10000) {
+                balance -= upgradePrice;
+                tapPower += 1;
+                upgradePrice += 10;
+                updateUI();
+            }
+        }
+
+        function activateDoublePower() {
+            doublePowerActive = true;
+            setTimeout(() => { doublePowerActive = false; }, 3600000);
+            alert("Сила клика удвоена на 1 час!");
+        }
+
+        function activateShield() {
+            shieldActive = true;
+            setTimeout(() => { shieldActive = false; }, 3600000);
+            alert("Щит активирован на 1 час!");
+        }
+
+        function updateUI() {
+            document.getElementById('balance').innerText = balance;
+            document.getElementById('energy').innerText = energy + "/1000";
+            document.getElementById('tap-power').innerText = tapPower;
+            document.getElementById('upg-price').innerText = upgradePrice;
+        }
+
+        // Обнуление энергии в 00:00 по МСК
+        function checkMidnight() {
+            const now = new Date();
+            const mskOffset = 3 * 60; // UTC+3
+            const mskTime = new Date(now.getTime() + (now.getTimezoneOffset() + mskOffset) * 60000);
+            
+            if (mskTime.getHours() === 0 && mskTime.getMinutes() === 0) {
+                energy = 1000;
+                updateUI();
+            }
+        }
+        setInterval(checkMidnight, 60000);
+
+    </script>
+</body>
+</html>
