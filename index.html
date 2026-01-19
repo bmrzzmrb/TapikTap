@@ -1,132 +1,151 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TapikTap</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TapikTap</title>
 
-    <!-- ✅ ОФИЦИАЛЬНЫЙ TELEGRAM WEBAPP SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- Telegram WebApp SDK -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <style>
-        body {
-            margin: 0;
-            background: #1a1a2e;
-            color: white;
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            touch-action: none;
-            user-select: none;
-        }
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle at top, #ff2a2a, #6a0000);
+    font-family: Arial, sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
 
-        #coin {
-            width: 180px;
-            height: 180px;
-            background: #f1c40f;
-            border-radius: 50%;
-            border: 8px solid #d35400;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 64px;
-            cursor: pointer;
-            transition: transform 0.08s;
-            box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
-        }
+.stats {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
 
-        #coin:active {
-            transform: scale(0.9);
-        }
+#coin {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #ffd700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 70px;
+    box-shadow: 0 0 30px rgba(255, 50, 50, 0.9);
+    transition: transform 0.08s;
+}
 
-        .stats {
-            margin-bottom: 20px;
-            font-size: 22px;
-            text-align: center;
-        }
+#coin:active {
+    transform: scale(0.9);
+}
 
-        button {
-            padding: 12px 24px;
-            background: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-size: 18px;
-        }
-    </style>
+button {
+    margin-top: 10px;
+    padding: 12px 22px;
+    font-size: 18px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(45deg, #ff3b3b, #ff8800);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 100, 100, 0.8);
+}
+</style>
 </head>
 
 <body>
 
 <div class="stats">
-    <div>Баланс: <span id="balance">0</span></div>
-    <div>Энергия: <span id="energy">1000</span></div>
+    <div>💰 Баланс: <span id="balance">0</span></div>
+    <div>⚡ Сила клика: <span id="power">1</span></div>
+    <div>🔼 Цена апгрейда: <span id="cost">10</span></div>
 </div>
 
 <div id="coin">🪙</div>
 
-<button onclick="upgrade()">Апгрейд (Цена: <span id="cost">10</span>)</button>
+<button onclick="upgrade()">Апгрейд</button>
 
 <script>
-    // ✅ ИНИЦИАЛИЗАЦИЯ TELEGRAM
-    let tg = null;
-    if (window.Telegram && window.Telegram.WebApp) {
-        tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-    }
+/* -------- TELEGRAM INIT -------- */
+let tg = window.Telegram?.WebApp;
+tg?.ready();
+tg?.expand();
 
-    let balance = 0;
-    let energy = 1000;
-    let power = 1;
-    let cost = 10;
+/* -------- SERVER URL -------- */
+const SERVER = "http://31.23.234.141:8000";
 
-    const balanceEl = document.getElementById('balance');
-    const energyEl = document.getElementById('energy');
-    const costEl = document.getElementById('cost');
-    const coin = document.getElementById('coin');
+/* -------- USER -------- */
+const userId = Telegram.WebApp.initDataUnsafe.user.id;
 
-    coin.addEventListener('pointerdown', () => {
-        if (energy <= 0) return;
+/* -------- GAME STATE -------- */
+let balance = 0;
+let power = 1;
+let cost = 10;
 
-        balance += power;
-        energy--;
+const balanceEl = document.getElementById("balance");
+const powerEl = document.getElementById("power");
+const costEl = document.getElementById("cost");
+const coin = document.getElementById("coin");
 
-        if (tg && tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred('medium');
-        }
+/* -------- LOAD USER -------- */
+fetch(`${SERVER}/click`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ user_id: userId })
+})
+.then(r => r.json())
+.then(data => {
+    balance = data.balance;
+    power = data.power;
+    cost = power * 10;
+    updateUI();
+});
 
+/* -------- CLICK -------- */
+coin.addEventListener("pointerdown", () => {
+    fetch(`${SERVER}/click`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        balance = data.balance;
+        power = data.power;
+        cost = power * 10;
         updateUI();
+        tg?.HapticFeedback?.impactOccurred("medium");
     });
+});
 
-    function upgrade() {
-        if (balance >= cost) {
-            balance -= cost;
-            power++;
-            cost += 10;
+/* -------- UPGRADE -------- */
+function upgrade() {
+    fetch(`${SERVER}/upgrade`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user_id: userId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.error) {
+            balance = data.balance;
+            power = data.power;
+            cost = power * 10;
             updateUI();
         }
-    }
+    });
+}
 
-    function updateUI() {
-        balanceEl.innerText = balance;
-        energyEl.innerText = energy;
-        costEl.innerText = cost;
-    }
-
-    // 🔋 Восстановление энергии в 00:00 МСК
-    setInterval(() => {
-        const now = new Date();
-        const msk = new Date(now.toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }));
-        if (msk.getHours() === 0 && msk.getMinutes() === 0) {
-            energy = 1000;
-            updateUI();
-        }
-    }, 60000);
+function updateUI() {
+    balanceEl.innerText = balance;
+    powerEl.innerText = power;
+    costEl.innerText = cost;
+}
 </script>
 
 </body>
