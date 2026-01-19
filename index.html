@@ -302,10 +302,10 @@ body {
 
 </div>
 
-<!-- БОЙ -->
+<!-- ЭКРАН БОЯ -->
 <div id="boss-battle" class="screen">
-    <h2 id="boss-name"></h2>
-    <div id="timer">⏱️ 60</div>
+    <h2 id="boss-name">БОСС</h2>
+    <div id="timer">⏱️ 30</div>
     <div class="hp-container"><div id="hp-bar"></div></div>
     <img id="boss-img" onclick="hitBoss()">
 </div>
@@ -314,7 +314,7 @@ body {
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-let balance = 100;
+let balance = 0;
 let clickPower = 1;
 let upgradeCost = 10;
 
@@ -322,97 +322,118 @@ let bossHp = 0, bossMaxHp = 0, bossReward = 0;
 let fightTimer = null;
 let timeLeft = 30;
 
-function showScreen(id, btn){
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active-screen'));
-    document.getElementById(id).classList.add('active-screen');
-    if(btn){
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
+// ЗАГРУЗКА ИЗ ОБЛАКА
+async function loadGame() {
+    if (tg.isVersionAtLeast('6.9')) {
+        tg.CloudStorage.getItems(['balance', 'power', 'cost'], (err, values) => {
+            if (!err) {
+                if (values.balance) balance = parseInt(values.balance);
+                if (values.power) clickPower = parseInt(values.power);
+                if (values.cost) upgradeCost = parseInt(values.cost);
+                updateUI();
+            }
+        });
     }
 }
 
-function clickCoin(){
-    balance += clickPower;
-    update();
-}
-
-function upgradeClick(){
-    if(balance < upgradeCost) return;
-    balance -= upgradeCost;
-    clickPower++;
-    upgradeCost += 10;
-    update();
-}
-
-function startBossFight(name,hp,reward,cost,img){
-    if(balance < cost) return alert('Мало монет');
-    balance -= cost;
-
-    bossHp = bossMaxHp = hp;
-    bossReward = reward;
-
-    document.getElementById('boss-name').innerText = name;
-    document.getElementById('boss-img').src = img;
-
-    startTimer();
-    updateBoss();
-
-    document.querySelector('.nav-tabs').style.display = 'none';
-    showScreen('boss-battle');
-}
-
-function startTimer(){
-    clearInterval(fightTimer);
-    timeLeft = 30;
-    document.getElementById('timer').innerText = '⏱️ ' + timeLeft;
-
-    fightTimer = setInterval(()=>{
-        timeLeft--;
-        document.getElementById('timer').innerText = '⏱️ ' + timeLeft;
-
-        if(timeLeft <= 0){
-            loseFight();
-        }
-    },1000);
-}
-
-function loseFight(){
-    clearInterval(fightTimer);
-    alert('ТЫ ПРОЕБАЛ, ОКУНЬ 💀');
-    document.querySelector('.nav-tabs').style.display = 'flex';
-    showScreen('main', document.querySelectorAll('.tab-btn')[0]);
-}
-
-function hitBoss(){
-    bossHp -= clickPower;
-    if(bossHp <= 0){
-        clearInterval(fightTimer);
-        balance += bossReward;
-        alert('ПОБЕДА +' + bossReward);
-        document.querySelector('.nav-tabs').style.display = 'flex';
-        showScreen('boss-list', document.querySelectorAll('.tab-btn')[1]);
+// СОХРАНЕНИЕ В ОБЛАКО
+function saveGame() {
+    if (tg.isVersionAtLeast('6.9')) {
+        tg.CloudStorage.setItem('balance', balance.toString());
+        tg.CloudStorage.setItem('power', clickPower.toString());
+        tg.CloudStorage.setItem('cost', upgradeCost.toString(), (err, success) => {
+            if (success) tg.showAlert('✅ Прогресс в облаке!');
+        });
+    } else {
+        tg.showAlert('Обновите Telegram!');
     }
-    updateBoss();
 }
 
-function updateBoss(){
-    document.getElementById('hp-bar').style.width = (bossHp / bossMaxHp * 100) + '%';
-}
-
-function saveGame(){
-    tg.CloudStorage.setItem('balance', balance.toString());
-    tg.CloudStorage.setItem('power', clickPower.toString());
-    tg.CloudStorage.setItem('cost', upgradeCost.toString());
-    alert('Сохранено');
-}
-
-function update(){
+function updateUI() {
     document.getElementById('balance').innerText = balance;
     document.getElementById('clickLvl').innerText = clickPower;
     document.getElementById('upgradeCost').innerText = upgradeCost;
 }
-update();
+
+function showScreen(id, btn) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+    document.getElementById(id).classList.add('active-screen');
+    if (btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+}
+
+function clickCoin() {
+    balance += clickPower;
+    updateUI();
+    const img = document.getElementById('coin');
+    img.style.transform = 'scale(0.95)';
+    setTimeout(() => img.style.transform = 'scale(1)', 50);
+}
+
+function upgradeClick() {
+    if (balance >= upgradeCost) {
+        balance -= upgradeCost;
+        clickPower++;
+        upgradeCost = Math.round(upgradeCost * 1.5);
+        updateUI();
+    } else {
+        tg.showAlert('Мало яиц!');
+    }
+}
+
+function startBossFight(name, hp, reward, cost, img) {
+    if (balance < cost) return tg.showAlert('Нужно ' + cost + ' монет!');
+    balance -= cost;
+    updateUI();
+
+    bossHp = bossMaxHp = hp;
+    bossReward = reward;
+    timeLeft = 30;
+
+    document.getElementById('boss-name').innerText = name;
+    document.getElementById('boss-img').src = img;
+    document.getElementById('hp-bar').style.width = '100%';
+    
+    document.querySelector('.nav-tabs').style.display = 'none';
+    showScreen('boss-battle');
+    
+    clearInterval(fightTimer);
+    fightTimer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = '⏱️ ' + timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(fightTimer);
+            tg.showAlert('ВРЕМЯ ВЫШЛО! 💀');
+            endFight();
+        }
+    }, 1000);
+}
+
+function hitBoss() {
+    bossHp -= clickPower;
+    document.getElementById('hp-bar').style.width = (bossHp / bossMaxHp * 100) + '%';
+    
+    if (bossHp <= 0) {
+        clearInterval(fightTimer);
+        balance += bossReward;
+        tg.showAlert('ПОБЕДА! +' + bossReward);
+        endFight();
+    }
+}
+
+function endFight() {
+    document.querySelector('.nav-tabs').style.display = 'flex';
+    updateUI();
+    showScreen('main', document.querySelectorAll('.tab-btn')[0]);
+}
+
+// Запуск при старте
+loadGame();
 </script>
 
+</body>
+</html>
 </body>
 </html>
