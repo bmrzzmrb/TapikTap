@@ -115,6 +115,12 @@ body {
     height: 100%;
     background: linear-gradient(90deg, red, pink);
 }
+
+#timer {
+    font-size: 20px;
+    margin-top: 10px;
+    color: #ffaaaa;
+}
 </style>
 </head>
 
@@ -132,16 +138,12 @@ body {
 
 <!-- ГЛАВНАЯ -->
 <div id="main" class="screen active-screen">
-    <img id="coin"
-         src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/andrey.png"
-         onclick="clickCoin()">
-
+    <img id="coin" src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/andrey.png" onclick="clickCoin()">
     <div class="grid">
         <button class="neon-btn" onclick="upgradeClick()">
             УЛУЧШИТЬ СИЛУ<br>
             <small>Цена: <span id="upgradeCost">10</span></small>
         </button>
-
         <button class="neon-btn" onclick="saveGame()">💾 СОХРАНИТЬ</button>
     </div>
 </div>
@@ -291,6 +293,7 @@ body {
 <!-- БОЙ -->
 <div id="boss-battle" class="screen">
     <h2 id="boss-name"></h2>
+    <div id="timer">⏱️ 30</div>
     <div class="hp-container"><div id="hp-bar"></div></div>
     <img id="boss-img" onclick="hitBoss()">
 </div>
@@ -304,6 +307,8 @@ let clickPower = 1;
 let upgradeCost = 10;
 
 let bossHp = 0, bossMaxHp = 0, bossReward = 0;
+let fightTimer = null;
+let timeLeft = 30;
 
 function showScreen(id, btn){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active-screen'));
@@ -330,18 +335,46 @@ function upgradeClick(){
 function startBossFight(name,hp,reward,cost,img){
     if(balance < cost) return alert('Мало монет');
     balance -= cost;
+
     bossHp = bossMaxHp = hp;
     bossReward = reward;
+
     document.getElementById('boss-name').innerText = name;
     document.getElementById('boss-img').src = img;
+
+    startTimer();
     updateBoss();
+
     document.querySelector('.nav-tabs').style.display = 'none';
-    showScreen('boss-battle', null);
+    showScreen('boss-battle');
+}
+
+function startTimer(){
+    clearInterval(fightTimer);
+    timeLeft = 30;
+    document.getElementById('timer').innerText = '⏱️ ' + timeLeft;
+
+    fightTimer = setInterval(()=>{
+        timeLeft--;
+        document.getElementById('timer').innerText = '⏱️ ' + timeLeft;
+
+        if(timeLeft <= 0){
+            loseFight();
+        }
+    },1000);
+}
+
+function loseFight(){
+    clearInterval(fightTimer);
+    alert('ТЫ ПРОИГРАЛ 💀');
+    document.querySelector('.nav-tabs').style.display = 'flex';
+    showScreen('main', document.querySelectorAll('.tab-btn')[0]);
 }
 
 function hitBoss(){
     bossHp -= clickPower;
     if(bossHp <= 0){
+        clearInterval(fightTimer);
         balance += bossReward;
         alert('ПОБЕДА +' + bossReward);
         document.querySelector('.nav-tabs').style.display = 'flex';
