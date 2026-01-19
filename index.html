@@ -317,7 +317,7 @@ tg.expand();
 // Состояние игры
 let balance = 0;
 let clickPower = 1;
-let upgradeCost = 1;
+let upgradeCost = 10;
 let saveTimeout = null;
 
 // Вибрация
@@ -401,7 +401,7 @@ function upgradeClick() {
     if (balance >= upgradeCost) {
         balance -= upgradeCost;
         clickPower++;
-        upgradeCost = Math.round(upgradeCost * 1.5);
+        upgradeCost = Math.round(upgradeCost * 1.0);
         vibrate('medium');
         updateUI();
         saveGame();
