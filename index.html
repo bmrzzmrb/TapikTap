@@ -154,13 +154,13 @@ body {
     <div class="boss-card">
         <div class="boss-info">
             <b>Ходилка бродилка</b>
-            <small>HP: 300 000</small>
+            <small>HP: 20 000</small>
             <small>Вход: 1 000</small>
             <small>Награда: 15 000</small>
             <small>Появляется внезапно. Уходит без объяснений.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'Ходилка бродилка',300000,15000,1000,
+            'Ходилка бродилка',20000,15000,1000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/hodilkabrodilka.jpg'
         )">В БОЙ</button>
     </div>
@@ -201,11 +201,11 @@ body {
             <b>Агаааааа</b>
             <small>HP: 2 000</small>
             <small>Вход: 5 000</small>
-            <small>Награда: 12 000</small>
+            <small>Награда: 30000</small>
             <small>Ор слышен за три района.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'Агаааааа',2000,12000,5000,
+            'Агаааааа',2000,30000,5000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/agaaa.jpg'
         )">В БОЙ</button>
     </div>
@@ -214,13 +214,13 @@ body {
     <div class="boss-card">
         <div class="boss-info">
             <b>Иистоооорииик</b>
-            <small>HP: 250000</small>
+            <small>HP: 25000</small>
             <small>Вход: 30 000</small>
             <small>Награда: 250 000</small>
             <small>Фа Фа Фа шнейне ватафа.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'Иистоооорииик',250000,250000,30000,
+            'Иистоооорииик',25000,250000,30000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/istorik.jpg'
         )">В БОЙ</button>
     </div>
@@ -259,13 +259,13 @@ body {
     <div class="boss-card">
         <div class="boss-info">
             <b>Дикая троица</b>
-            <small>HP: 200 000</small>
+            <small>HP: 100 000</small>
             <small>Вход: 250 000</small>
             <small>Награда: 750 000</small>
             <small>Бьют втроём. Думают ноль секунд.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'Дикая троица',200000,750000,250000,
+            'Дикая троица',100000,750000,250000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/troica.jpg'
         )">В БОЙ</button>
     </div>
@@ -274,13 +274,13 @@ body {
     <div class="boss-card">
         <div class="boss-info">
             <b>Мишук</b>
-            <small>HP: 150 000</small>
+            <small>HP: 100 000</small>
             <small>Вход: 500 000</small>
             <small>Награда: 2 000 000</small>
             <small>Помнит оценки. Никогда не забывает.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'Мишук',150000,2000000,500000,
+            'Мишук',100000,2000000,500000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mishyk.jpg'
         )">В БОЙ</button>
     </div>
@@ -319,7 +319,7 @@ let balance = 0;
 let clickPower = 1;
 let upgradeCost = 10;
 let saveTimeout = null;
-let upgradePriceStep = 100
+let upgradePriceStep = 10
 
 // Вибрация
 function vibrate(type = 'light') {
@@ -430,7 +430,7 @@ function startBossFight(name, hp, reward, cost, img) {
 
     bossHp = bossMaxHp = hp;
     bossReward = reward;
-    timeLeft = 30;
+    timeLeft = 60;
 
     document.getElementById('boss-name').innerText = name;
     document.getElementById('boss-img').src = img;
