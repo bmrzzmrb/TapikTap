@@ -7,123 +7,165 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
+* {
+    box-sizing: border-box;
+}
 body {
-    background: radial-gradient(circle, #2b0000 0%, #000 100%);
-    color: white;
+    background: radial-gradient(circle at top, #3a0000 0%, #000 70%);
+    color: #fff;
     font-family: 'Times New Roman', Roboto, sans-serif;
     text-align: center;
     margin: 0;
+    padding: 15px 0 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
     user-select: none;
 }
-
+/* ====== СТАТИСТИКА ====== */
 .stats-container {
-    margin-top: 20px;
-    background: rgba(255,0,0,0.1);
-    padding: 15px;
-    border-radius: 20px;
-    width: 85%;
+    margin-top: 15px;
+    background: rgba(255, 0, 0, 0.12);
+    padding: 16px 20px;
+    border-radius: 22px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.35);
 }
-
-.stats { font-size: 22px; font-weight: bold; }
-
+.stats {
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 60, 60, 0.9);
+}
+/* ====== НАВИГАЦИЯ ====== */
 .nav-tabs {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
+    margin: 18px 0 10px;
+    flex-wrap: wrap;
 }
-
 .tab-btn {
-    padding: 10px 25px;
-    border-radius: 12px;
-    border: 1px solid #ff0000;
-    background: #1a0000;
+    padding: 10px 26px;
+    border-radius: 14px;
+    border: 1px solid #ff2a2a;
+    background: linear-gradient(145deg, #1a0000, #2a0000);
     color: white;
     cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.25);
+    transition: 0.25s;
 }
-
-.tab-btn.active { background: #ff0000; }
-
+.tab-btn:hover {
+    box-shadow: 0 0 18px rgba(255, 0, 0, 0.6);
+}
+.tab-btn.active {
+    background: linear-gradient(145deg, #ff0000, #8b0000);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
+}
+/* ====== ЭКРАНЫ ====== */
 .screen {
     display: none;
     width: 100%;
+    max-width: 480px;
     align-items: center;
     flex-direction: column;
+    padding-top: 10px;
 }
-
-.active-screen { display: flex; }
-
+.active-screen {
+    display: flex;
+}
+/* ====== ЯЙЦО / БОСС ====== */
 #coin, #boss-img {
     width: 220px;
     height: 220px;
     border-radius: 50%;
-    border: 4px solid #ff0000;
-    box-shadow: 0 0 30px #ff0000;
+    border: 4px solid #ff1e1e;
+    box-shadow:
+        0 0 25px #ff0000,
+        0 0 45px rgba(255, 0, 0, 0.6);
     cursor: pointer;
     object-fit: cover;
+    margin: 18px 0;
+    transition: transform 0.15s;
 }
-
+#coin:active, #boss-img:active {
+    transform: scale(0.95);
+}
+/* ====== КНОПКИ ====== */
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    width: 90%;
-    max-width: 400px;
+    gap: 14px;
+    width: 92%;
+    max-width: 420px;
     margin-top: 20px;
 }
-
 .neon-btn {
-    background: linear-gradient(135deg, #ff0000, #8b0000);
+    background: linear-gradient(135deg, #ff0000, #7a0000);
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     color: white;
-    padding: 12px;
+    padding: 14px 10px;
     font-weight: bold;
     cursor: pointer;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+    box-shadow:
+        0 0 15px rgba(255, 0, 0, 0.5),
+        inset 0 0 10px rgba(255, 255, 255, 0.1);
+    transition: 0.2s;
 }
-
+.neon-btn:hover {
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
+}
+/* ====== БОССЫ ====== */
 .boss-card {
-    background: rgba(60,0,0,0.5);
-    border-radius: 15px;
-    padding: 15px;
-    margin: 10px;
-    width: 85%;
+    background: rgba(70, 0, 0, 0.55);
+    border-radius: 18px;
+    padding: 16px;
+    margin: 12px 0;
+    width: 92%;
+    max-width: 420px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     text-align: left;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
 }
-
+.boss-info {
+    text-shadow: 0 0 6px rgba(255, 80, 80, 0.6);
+}
 .boss-info small {
     display: block;
     opacity: 0.85;
+    margin-top: 4px;
 }
-
+/* ====== HP ====== */
 .hp-container {
-    width: 80%;
-    height: 25px;
-    background: #220000;
-    border-radius: 12px;
+    width: 85%;
+    height: 26px;
+    background: #1c0000;
+    border-radius: 14px;
     overflow: hidden;
-    margin: 10px 0;
+    margin: 12px 0;
+    box-shadow: inset 0 0 8px rgba(255, 0, 0, 0.6);
 }
 
 #hp-bar {
     height: 100%;
-    background: linear-gradient(90deg, red, pink);
+    background: linear-gradient(90deg, #ff0000, #ff9a9a);
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
 }
-
+/* ====== ТАЙМЕР ====== */
 #timer {
     font-size: 20px;
     margin-top: 10px;
-    color: #ffaaaa;
+    color: #ffb3b3;
+    text-shadow: 0 0 10px rgba(255, 80, 80, 0.8);
 }
 </style>
 </head>
-
 <body>
 
 <div class="stats-container">
@@ -133,24 +175,56 @@ body {
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="showScreen('main', this)">ГЛАВНАЯ</button>
         <button class="tab-btn" onclick="showScreen('boss-list', this)">БОССЫ</button>
+        <button class="tab-btn" onclick="showScreen('gamble', this)">КАЗИНО</button>
     </div>
 </div>
 
-<!-- ГЛАВНАЯ -->
+<!-- ЭКРАН ГЛАВНАЯ -->
 <div id="main" class="screen active-screen">
     <img id="coin" src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/andrey.png" onclick="clickCoin()">
     <div class="grid">
         <button class="neon-btn" onclick="upgradeClick()">
-            УЛУЧШИТЬ СИЛУ<br>
+            ➕ СИЛА +1<br>
             <small>Цена: <span id="upgradeCost">10</span></small>
         </button>
+
+        <button class="neon-btn" onclick="upgradeClickX2()">
+            💥 СИЛА x2<br>
+            <small>Цена: <span id="x2Cost">50000000</span></small>
+        </button>
+
         <button class="neon-btn" onclick="saveGame()">💾 СОХРАНИТЬ</button>
     </div>
 </div>
 
-<div id="boss-list" class="screen">
+<!-- ЭКРАН АЗАРТ -->
+<div id="gamble" class="screen">
+    <h2>КАЗИНО</h2>
+    <p>Выбери ставку и цвет</p>
 
-    <!-- ХОДИЛКА БРОДИЛКА (САМЫЙ ПЕРВЫЙ) -->
+    <!-- СТАВКИ -->
+    <div class="grid">
+        <button class="neon-btn" onclick="setBet(10000)">10.000</button>
+        <button class="neon-btn" onclick="setBetPercent(25)">25%</button>
+        <button class="neon-btn" onclick="setBetPercent(50)">50%</button>
+        <button class="neon-btn" onclick="setAllIn()">ALL IN</button>
+    </div>
+
+    <p style="margin-top:15px;">
+        Ставка: <b><span id="currentBet">0</span></b>
+    </p>
+
+    <!-- ЦВЕТА -->
+    <div class="grid">
+        <button class="neon-btn" style="background:#ff0000" onclick="playGamble('red')">🔴</button>
+        <button class="neon-btn" style="background:#00aa00" onclick="playGamble('green')">🟢</button>
+        <button class="neon-btn" style="background:#0000ff" onclick="playGamble('blue')">🔵</button>
+    </div>
+
+    <p id="gambleResult" style="margin-top:15px;"></p>
+</div>
+
+<div id="boss-list" class="screen">
     <div class="boss-card">
         <div class="boss-info">
             <b>Ходилка бродилка</b>
@@ -164,8 +238,6 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/hodilkabrodilka.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- МЕРСЕДЕС -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Мерседес</b>
@@ -179,8 +251,6 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mersedes.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- ФИЗИК -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Физик</b>
@@ -194,23 +264,19 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/fizik.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- АГААААА -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Агаааааа</b>
             <small>HP: 2 000</small>
             <small>Вход: 5 000</small>
-            <small>Награда: 30000</small>
+            <small>Награда: 300 000 000</small>
             <small>Ор слышен за три района.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'Агаааааа',2000,30000,5000,
+            'Агаааааа',2000,300000000,5000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/agaaa.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- ИСТОРИК -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Иистоооорииик</b>
@@ -224,8 +290,6 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/istorik.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- ЖАННА КИСКА -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Жанна Киска</b>
@@ -239,8 +303,6 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/jannakiska.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- МОХ-ИРЕВА -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Мох-Ирева</b>
@@ -254,8 +316,6 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/moxireva.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- ДИКАЯ ТРОИЦА -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Дикая троица</b>
@@ -269,8 +329,6 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/troica.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- МИШУК -->
     <div class="boss-card">
         <div class="boss-info">
             <b>Мишук</b>
@@ -284,8 +342,84 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mishyk.jpg'
         )">В БОЙ</button>
     </div>
-
-    <!-- ЧОПОР (ФИНАЛ / СТРАШНЫЙ) -->
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>ШЕВА</b>
+            <small>HP: 100 000</small>
+            <small>Вход: 500 000</small>
+            <small>Награда: 2 000 000</small>
+            <small>До свидания, долбаеб.</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'ШЕВА',100000,2000000,500000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/sheva.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>ИГОРЬ</b>
+            <small>HP: 100 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 1 000 000</small>
+            <small>Хороший человек.</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'ИГОРЬ',100000,1000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/igor.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>Артемий</b>
+            <small>HP: 1 000 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 10 000 000</small>
+            <small>Крутой пацан</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'Артемий',1000000,10000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/tema.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>Дементий</b>
+            <small>HP: 100 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 1 000 000</small>
+            <small>Люблю тебя пупсик.</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'Дементий',100000,1000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/demaa.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>БИГБООООН</b>
+            <small>HP: 1 000 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 5 000 000</small>
+            <small>Слабая версия толстого любимого нашего друга.</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'БИГБООООН',1000000,5000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/bigbon.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>БИГБООООН В ПРАЙМЕ</b>
+            <small>HP: 100 000 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 50 000 000</small>
+            <small>ОН В ПРАЙМЕ И КУШАЕТ ПЕЧЕНЬЕ,ВАХТЕР ПРОКАЗНИК.</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'БИГБООООН В ПРАЙМЕ',100000000,50000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/bigbontwo.jpg'
+        )">В БОЙ</button>
+    </div>
     <div class="boss-card">
         <div class="boss-info">
             <b>ЧОПОР</b>
@@ -314,18 +448,110 @@ body {
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-// Состояние игры
+// ===== СОСТОЯНИЕ ИГРЫ =====
 let balance = 0;
 let clickPower = 1;
 let upgradeCost = 10;
 let saveTimeout = null;
-let upgradePriceStep = 10
+let upgradePriceStep = 10;
+let x2UpgradeCost = 50000000;
 
-// Вибрация
+// ===== АНТИ-АВТОКЛИКЕР =====
+let clickTimestamps = [];
+let clickBlockedUntil = 0;
+
+const MAX_CLICKS_PER_SEC = 25;
+const BLOCK_TIME_MS = 5 * 60 * 1000; // 5 минут
+
+// ===== БОСС =====
+let bossHp = 0;
+let bossMaxHp = 0;
+let bossReward = 0;
+let fightTimer = null;
+let timeLeft = 0;
+let inBossFight = false;
+
+function formatNumber(num) {
+    return Math.floor(num).toLocaleString('de-DE');
+}
+
+// ===== ВИБРАЦИЯ =====
 function vibrate(type = 'light') {
     if (tg.HapticFeedback) {
         tg.HapticFeedback.impactOccurred(type);
     }
+}
+
+// ===== АЗАРТ =====
+let currentBet = 0;
+
+function setBet(amount) {
+    currentBet = Math.min(amount, balance);
+    updateGambleUI();
+}
+
+function setBetPercent(percent) {
+    currentBet = Math.floor(balance * (percent / 100));
+    updateGambleUI();
+}
+
+function setAllIn() {
+    currentBet = balance;
+    updateGambleUI();
+}
+
+function updateGambleUI() {
+    document.getElementById('currentBet').innerText = formatNumber(currentBet);
+}
+
+function playGamble(color) {
+    if (currentBet <= 0) {
+        tg.showAlert('Ставка не выбрана');
+        return;
+    }
+
+    if (currentBet > balance) {
+        tg.showAlert('Недостаточно яиц');
+        return;
+    }
+
+    const colors = ['red', 'green', 'blue'];
+    const result = colors[Math.floor(Math.random() * colors.length)];
+
+    balance -= currentBet;
+
+    let text = 'Выпал цвет: ';
+
+    if (result === 'red') text += '🔴';
+    if (result === 'green') text += '🟢';
+    if (result === 'blue') text += '🔵';
+
+    if (result === color) {
+        const win = currentBet * 2;
+        balance += win;
+        text += '<br><b>🎉 Победа! +' + formatNumber(win) + '</b>';
+    } else {
+        text += '<br><b>❌ Проигрыш</b>';
+    }
+
+    currentBet = 0;
+    document.getElementById('gambleResult').innerHTML = text;
+
+    updateUI();
+    updateGambleUI();
+    saveGame();
+}
+
+function isClickBlocked() {
+    const now = Date.now();
+
+    if (now < clickBlockedUntil) {
+        const secondsLeft = Math.ceil((clickBlockedUntil - now) / 1000);
+        tg.showAlert('⛔ ПИДОРАС ОБНАРУЖЕН\nСоси хуй ' + secondsLeft + ' сек.');
+        return true;
+    }
+
+    return false;
 }
 
 // Умное сохранение (Локально + Облако)
@@ -334,6 +560,8 @@ function saveGame() {
         balance: balance,
         clickPower: clickPower,
         upgradeCost: upgradeCost,
+        x2UpgradeCost: x2UpgradeCost,
+        clickBlockedUntil: clickBlockedUntil,
         lastSave: Date.now()
     };
 
@@ -360,6 +588,8 @@ function loadGame() {
         balance = d.balance || 0;
         clickPower = d.clickPower || 1;
         upgradeCost = d.upgradeCost || 10;
+        x2UpgradeCost = d.x2UpgradeCost || 50000000;
+        clickBlockedUntil = d.clickBlockedUntil || 0;
         updateUI();
     }
 
@@ -374,6 +604,8 @@ function loadGame() {
                     balance = cloud.balance;
                     clickPower = cloud.clickPower;
                     upgradeCost = cloud.upgradeCost;
+                    x2UpgradeCost = cloud.x2UpgradeCost;
+                    clickBlockedUntil = d.clickBlockedUntil;
                     updateUI();
                 }
             }
@@ -382,16 +614,39 @@ function loadGame() {
 }
 
 function updateUI() {
-    document.getElementById('balance').innerText = Math.floor(balance);
-    document.getElementById('clickLvl').innerText = clickPower;
-    document.getElementById('upgradeCost').innerText = upgradeCost;
+    document.getElementById('balance').innerText = formatNumber(balance);
+    document.getElementById('clickLvl').innerText = formatNumber(clickPower);
+    document.getElementById('upgradeCost').innerText = formatNumber(upgradeCost);
+
+    if (document.getElementById('x2Cost')) {
+        document.getElementById('x2Cost').innerText = formatNumber(x2UpgradeCost);
+    }
 }
 
 function clickCoin() {
+    const now = Date.now();
+
+    // ⛔ Если клики заблокированы
+    if (isClickBlocked()) return;
+
+    clickTimestamps = clickTimestamps.filter(t => now - t < 1000);
+    clickTimestamps.push(now);
+
+    // 🚨 Обнаружение автокликера
+    if (clickTimestamps.length > MAX_CLICKS_PER_SEC) {
+        clickBlockedUntil = now + BLOCK_TIME_MS;
+        clickTimestamps = [];
+
+        tg.showAlert('🚨 Обнаружен пидорас с кликером!\nКлики заблокированы на 5 минут.');
+        saveGame();
+        return;
+    }
+
+    // ✅ Обычный клик
     balance += clickPower;
     vibrate('light');
     updateUI();
-    saveGame(); // Вызов безопасен, сработает задержка
+    saveGame();
 
     const img = document.getElementById('coin');
     img.style.transform = 'scale(0.95)';
@@ -401,17 +656,8 @@ function clickCoin() {
 function upgradeClick() {
     if (balance >= upgradeCost) {
         balance -= upgradeCost;
-        
-        // Сила качается ровно по +10
         clickPower += 1; 
-        
-        // Цена растет линейно: 100, 200, 300, 400... 
-        // Или 1000, 1100, 1200, 1300... (смотря какая начальная цена)
         upgradeCost = upgradeCost + upgradePriceStep;
-        
-        // По желанию: можно сделать, чтобы сам шаг цены тоже чуть-чуть рос
-        // upgradePriceStep += 10; 
-
         vibrate('medium');
         updateUI();
         saveGame();
@@ -419,56 +665,111 @@ function upgradeClick() {
         tg.showAlert('Мало яиц!');
     }
 }
-
-// Логика Босса
-let bossHp, bossMaxHp, bossReward, fightTimer, timeLeft;
-
+function upgradeClickX2() {
+    if (balance >= x2UpgradeCost) {
+        balance -= x2UpgradeCost;
+        clickPower *= 2;
+        x2UpgradeCost *= 5;
+        vibrate('heavy');
+        updateUI();
+        saveGame();
+    } else {
+        tg.showAlert('Нужно ' + x2UpgradeCost + ' яиц!');
+    }
+}
+// ===== СТАРТ БОССА =====
 function startBossFight(name, hp, reward, cost, img) {
-    if (balance < cost) return tg.showAlert('Нужно ' + cost + ' яиц!');
+    if (balance < cost) {
+        tg.showAlert('Нужно ' + cost + ' яиц!');
+        return;
+    }
+
     balance -= cost;
     updateUI();
 
-    bossHp = bossMaxHp = hp;
+    bossHp = hp;
+    bossMaxHp = hp;
     bossReward = reward;
     timeLeft = 60;
+    inBossFight = true;
 
     document.getElementById('boss-name').innerText = name;
     document.getElementById('boss-img').src = img;
     document.getElementById('hp-bar').style.width = '100%';
-    
+    document.getElementById('timer').innerText = '⏱️ 60';
+
     showScreen('boss-battle');
-    
+
     clearInterval(fightTimer);
     fightTimer = setInterval(() => {
         timeLeft--;
         document.getElementById('timer').innerText = '⏱️ ' + timeLeft;
+
         if (timeLeft <= 0) {
-            clearInterval(fightTimer);
-            tg.showAlert('Время вышло!');
-            showScreen('main');
+            endBossFight(false, '⏱️ Время вышло! Ты долбаеб');
         }
     }, 1000);
 }
 
+// ===== УДАР ПО БОССУ =====
 function hitBoss() {
+    if (!inBossFight) return;
+
+    // УРОН
     bossHp -= clickPower;
-    vibrate('light');
-    document.getElementById('hp-bar').style.width = (bossHp / bossMaxHp * 100) + '%';
-    if (bossHp <= 0) {
-        clearInterval(fightTimer);
-        balance += bossReward;
-        saveGame();
-        tg.showAlert('Победа! +' + bossReward);
-        showScreen('main');
+    if (bossHp < 0) bossHp = 0;
+
+    // 🔮 5% ЛЕЧЕНИЕ
+    if (Math.random() < 0.05 && bossHp > 0) {
+        const heal = Math.floor(bossMaxHp * 0.1);
+        bossHp = Math.min(bossHp + heal, bossMaxHp);
+        tg.showAlert('Босс восстановил HP! ОН ЮЗАЕТ ЗАНЫ');
+    }
+
+    // 💰 15% КРАЖА
+    if (Math.random() < 0.02 && balance > 0) {
+        const stolen = Math.max(1, Math.floor(balance * 0.05));
+        balance = Math.max(0, balance - stolen);
+        tg.showAlert('Босс спиздил ' + stolen + ' яиц!');
         updateUI();
+    }
+
+    vibrate('light');
+
+    document.getElementById('hp-bar').style.width =
+        (bossHp / bossMaxHp * 100) + '%';
+
+    if (bossHp <= 0) {
+        endBossFight(true, 'Победа! +' + bossReward);
     }
 }
 
+// ===== КОНЕЦ БОЯ =====
+function endBossFight(win, message) {
+    clearInterval(fightTimer);
+    inBossFight = false;
+
+    if (win) {
+        balance += bossReward;
+        saveGame();
+    }
+
+    tg.showAlert(message);
+    showScreen('main');
+    updateUI();
+}
+
+// ===== ЭКРАНЫ =====
 function showScreen(id, btn) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+    document.querySelectorAll('.screen').forEach(s =>
+        s.classList.remove('active-screen')
+    );
     document.getElementById(id).classList.add('active-screen');
+
     if (btn) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b =>
+            b.classList.remove('active')
+        );
         btn.classList.add('active');
     }
 }
