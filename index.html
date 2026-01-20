@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Тапай яйца долбаеб</title>
+<title>bmrzzz</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -192,7 +192,10 @@ body {
             💥 СИЛА x2<br>
             <small>Цена: <span id="x2Cost">50000000</span></small>
         </button>
-
+        <button class="neon-btn" onclick="upgradeMax()">
+            🔥 Сила<br>
+            <small>Купить силу на все деньги</small>
+        </button>        
         <button class="neon-btn" onclick="saveGame()">💾 СОХРАНИТЬ</button>
         <button id="musicBtn" class="neon-btn" onclick="toggleMusic()">🎵 Вкл/Выкл</button>
     </div>
@@ -562,6 +565,25 @@ function isClickBlocked() {
 
     return false;
 }
+
+function upgradeMax() {
+    let bought = 0;
+
+    while (balance >= upgradeCost) {
+        balance -= upgradeCost;
+        clickPower += 1;
+        upgradeCost += upgradePriceStep;
+        bought++;
+    }
+
+    if (bought > 0) {
+        vibrate('heavy');
+        tg.showAlert('🔥 Куплено уровней: ' + bought);
+        updateUI();
+        saveGame();
+    } else {
+        tg.showAlert('❌ Недостаточно яиц');
+    }
 
 // Умное сохранение (Локально + Облако)
 function saveGame() {
