@@ -391,7 +391,32 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/tema.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>ДЕМЕНТИЙ</b>
+            <small>HP: 300 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 10 000 000</small>
+            <small>Люблю тебя пупсик</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'ДЕМЕНТИЙ',300000,10000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/demaa.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>БИГБРН</b>
+            <small>HP: 300 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 10 000 000</small>
+            <small>НЕ В ПРАЙМЕ ОН</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'БИГБОН',300000,10000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/tema.jpg'
+        )">В БОЙ</button>
+    </div>
     <div class="boss-card">
         <div class="boss-info">
             <b>БИГБООООН В ПРАЙМЕ</b>
@@ -411,11 +436,11 @@ body {
             <b>ЧОПОР</b>
             <small>HP: 300 000 000</small>
             <small>Вход: 50 000 000</small>
-            <small>Награда: 900 000 000</small>
+            <small>Награда: 9 000 000 000</small>
             <small>МЯЯЯЯЯЧ СЮДАААААА.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'ЧОПОР',300000000,900000000,50000000,
+            'ЧОПОР',300000000,9000000000,50000000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/chopor.jpg'
         )">В БОЙ</button>
     </div>
@@ -446,7 +471,7 @@ let x2UpgradeCost = 50000000;
 let clickTimestamps = [];
 let clickBlockedUntil = 0;
 
-const MAX_CLICKS_PER_SEC = 25;
+const MAX_CLICKS_PER_SEC = 15;
 const BLOCK_TIME_MS = 5 * 60 * 1000; // 5 минут
 
 // ===== БОСС =====
@@ -751,7 +776,7 @@ function hitBoss() {
     }
 
     // 💰 15% КРАЖА
-    if (Math.random() < 0.02 && balance > 0) {
+    if (Math.random() < 0.0002 && balance > 0) {
         const stolen = Math.max(1, Math.floor(balance * 0.05));
         balance = Math.max(0, balance - stolen);
         tg.showAlert('Босс спиздил ' + stolen + ' яиц!');
