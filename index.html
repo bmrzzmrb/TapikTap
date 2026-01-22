@@ -7,117 +7,140 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+
 body {
-    background: radial-gradient(circle at top, #3a0000 0%, #000 70%);
-    color: #fff;
-    font-family: 'Times New Roman', Roboto, sans-serif;
-    text-align: center;
     margin: 0;
-    padding: 15px 0 30px;
+    padding: 16px 0 30px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
+    text-align: center;
     user-select: none;
+    color: #fff;
+    font-family: 'Inter', 'Roboto', sans-serif;
+
+    /* ===== ФОН (ВСТАВЬ СЮДА RAW-ССЫЛКУ С GITHUB) ===== */
+    background:
+        linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0.95)),
+        url("https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
-/* ====== СТАТИСТИКА ====== */
+
+/* ===== СТАТА ===== */
 .stats-container {
-    margin-top: 15px;
-    background: rgba(255, 0, 0, 0.12);
-    padding: 16px 20px;
-    border-radius: 22px;
     width: 90%;
     max-width: 420px;
-    box-shadow: 0 0 25px rgba(255, 0, 0, 0.35);
+    margin-top: 12px;
+    padding: 18px 22px;
+    border-radius: 22px;
+    background: rgba(40,0,0,0.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,0,0,0.35);
+    box-shadow: 0 0 30px rgba(255,0,0,0.4);
 }
+
 .stats {
     font-size: 22px;
-    font-weight: bold;
-    text-shadow: 0 0 8px rgba(255, 60, 60, 0.9);
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(255,80,80,0.9);
 }
-/* ====== НАВИГАЦИЯ ====== */
+
+/* ===== НАВИГАЦИЯ ===== */
 .nav-tabs {
     display: flex;
     gap: 12px;
-    justify-content: center;
     margin: 18px 0 10px;
     flex-wrap: wrap;
+    justify-content: center;
 }
+
 .tab-btn {
     padding: 10px 26px;
     border-radius: 14px;
     border: 1px solid #ff2a2a;
     background: linear-gradient(145deg, #1a0000, #2a0000);
     color: white;
-    cursor: pointer;
     font-weight: bold;
-    box-shadow: 0 0 12px rgba(255, 0, 0, 0.25);
-    transition: 0.25s;
+    cursor: pointer;
+    box-shadow: 0 0 14px rgba(255,0,0,0.35);
 }
-.tab-btn:hover {
-    box-shadow: 0 0 18px rgba(255, 0, 0, 0.6);
-}
+
 .tab-btn.active {
     background: linear-gradient(145deg, #ff0000, #8b0000);
-    box-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
+    box-shadow: 0 0 25px rgba(255,0,0,0.9);
 }
-/* ====== ЭКРАНЫ ====== */
+
+/* ===== ЭКРАНЫ ===== */
 .screen {
     display: none;
     width: 100%;
     max-width: 480px;
-    align-items: center;
     flex-direction: column;
-    padding-top: 10px;
+    align-items: center;
 }
-.active-screen {
-    display: flex;
-}
-/* ====== ЯЙЦО / БОСС ====== */
-#coin, #boss-img {
-    width: 220px;
-    height: 220px;
+.active-screen { display: flex; }
+
+/* ===== ЯЙЦО ===== */
+#coin {
+    width: 230px;
+    height: 230px;
     border-radius: 50%;
-    border: 4px solid #ff1e1e;
-    box-shadow:
-        0 0 25px #ff0000,
-        0 0 45px rgba(255, 0, 0, 0.6);
-    cursor: pointer;
+    border: 4px solid rgba(255,50,50,0.9);
     object-fit: cover;
-    margin: 18px 0;
-    transition: transform 0.15s;
+    margin: 20px 0;
+    cursor: pointer;
+    box-shadow:
+        0 0 35px rgba(255,0,0,0.9),
+        0 0 70px rgba(255,0,0,0.4);
+    transition: transform 0.12s;
 }
-#coin:active, #boss-img:active {
-    transform: scale(0.95);
-}
-/* ====== КНОПКИ ====== */
+#coin:active { transform: scale(0.93); }
+
+/* ===== КНОПКИ ===== */
 .grid {
+    width: 92%;
+    max-width: 420px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
+    margin-top: 18px;
+}
+
+.neon-btn {
+    padding: 15px 12px;
+    border-radius: 16px;
+    border: none;
+    font-weight: 800;
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(145deg, #ff1a1a, #7a0000);
+    box-shadow:
+        0 6px 20px rgba(255,0,0,0.6),
+        inset 0 0 12px rgba(255,255,255,0.12);
+}
+.neon-btn:active { transform: scale(0.96); }
+
+/* ===== КАЗИНО ===== */
+.casino-section {
     width: 92%;
     max-width: 420px;
-    margin-top: 20px;
+    margin-top: 26px;
+    padding: 18px 14px;
+    border-radius: 18px;
+    background: rgba(20,0,0,0.6);
+    border: 1px solid rgba(255,0,0,0.3);
+    box-shadow: 0 0 25px rgba(255,0,0,0.4);
 }
-.neon-btn {
-    background: linear-gradient(135deg, #ff0000, #7a0000);
-    border: none;
-    border-radius: 14px;
-    color: white;
-    padding: 14px 10px;
-    font-weight: bold;
-    cursor: pointer;
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
-    box-shadow:
-        0 0 15px rgba(255, 0, 0, 0.5),
-        inset 0 0 10px rgba(255, 255, 255, 0.1);
-    transition: 0.2s;
-}
-.neon-btn:hover {
-    box-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
+
+.casino-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    text-shadow: 0 0 15px rgba(255,0,0,0.9);
 }
 /* ====== БОССЫ ====== */
 .boss-card {
@@ -141,6 +164,22 @@ body {
     opacity: 0.85;
     margin-top: 4px;
 }
+#boss-img {
+    width: 230px;       /* такой же размер, как яйцо */
+    height: 230px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,50,50,0.9);
+    object-fit: cover;
+    margin: 20px 0;
+    cursor: pointer;
+    box-shadow:
+        0 0 35px rgba(255,0,0,0.9),
+        0 0 70px rgba(255,0,0,0.4);
+    transition: transform 0.12s;
+}
+#boss-img:active {
+    transform: scale(0.93);
+}
 /* ====== HP ====== */
 .hp-container {
     width: 85%;
@@ -157,12 +196,19 @@ body {
     background: linear-gradient(90deg, #ff0000, #ff9a9a);
     box-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
 }
-/* ====== ТАЙМЕР ====== */
-#timer {
-    font-size: 20px;
-    margin-top: 10px;
-    color: #ffb3b3;
-    text-shadow: 0 0 10px rgba(255, 80, 80, 0.8);
+
+/* ===== СЕПАРАТОР ===== */
+.boss-separator {
+    width: 70%;
+    height: 2px;
+    margin: 22px 0;
+    background: linear-gradient(
+        to right,
+        transparent,
+        #ff2a2a,
+        transparent
+    );
+    box-shadow: 0 0 12px rgba(255,0,0,0.9);
 }
 </style>
 </head>
@@ -202,22 +248,22 @@ body {
 </div>
 
 <!-- Аудио (скрыто) -->
-<audio id="bgMusic" loop>
-    <source src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/music.mp3" type="audio/mpeg">
+<audio id="bgMusic" loop preload="auto">
+    <source src="https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/Music.mp3" type="audio/mpeg">
 </audio>
 
 <!-- ЭКРАН АЗАРТ -->
 <div id="gamble" class="screen">
-    <h2>КАЗИНО</h2>
+    <h2>🎰 КАЗИНО</h2>
     <p>Выбери сколько депнуть хочешь</p>
 
-    <!-- СТАВКИ ПРОЦЕНТЫ -->
+    <!-- СТАВКИ -->
     <div class="grid">
         <button class="neon-btn" onclick="setBetPercent(5)">5%</button>
         <button class="neon-btn" onclick="setBetPercent(10)">10%</button>
         <button class="neon-btn" onclick="setBetPercent(15)">15%</button>
         <button class="neon-btn" onclick="setBetPercent(35)">35%</button>
-        <button class="neon-btn" onclick="setBetPercent(35)">50%</button>
+        <button class="neon-btn" onclick="setBetPercent(50)">50%</button>
         <button class="neon-btn" onclick="setBetPercent(75)">75%</button>
         <button class="neon-btn" onclick="setAllIn()">ALL IN</button>
     </div>
@@ -226,11 +272,29 @@ body {
         Ставка: <b><span id="currentBet">0</span></b>
     </p>
 
-    <!-- ЦВЕТА -->
-    <div class="grid">
-        <button class="neon-btn" style="background:#ff0000" onclick="playGamble('red')">🔴</button>
-        <button class="neon-btn" style="background:#00aa00" onclick="playGamble('green')">🟢</button>
-        <button class="neon-btn" style="background:#0000ff" onclick="playGamble('blue')">🔵</button>
+    <!-- ===== УГАДАЙ ЦВЕТ ===== -->
+    <div class="casino-section">
+        <div class="casino-title">🎨 УГАДАЙ ЦВЕТ</div>
+        <div class="grid">
+            <button class="neon-btn" style="background:#ff0000" onclick="playGamble('red')">🔴</button>
+            <button class="neon-btn" style="background:#00aa00" onclick="playGamble('green')">🟢</button>
+            <button class="neon-btn" style="background:#0000ff" onclick="playGamble('blue')">🔵</button>
+        </div>
+    </div>
+
+    <!-- ===== ОДНОРУКИЙ БАНДИТ ===== -->
+    <div class="casino-section">
+        <div class="casino-title">🎰 ОДНОРУКИЙ БАНДИТ</div>
+        <button class="neon-btn" onclick="playSlots()">КРУТИТЬ</button>
+        <p id="slotResult"></p>
+    </div>
+
+    <!-- ===== 21 ===== -->
+    <div class="casino-section">
+        <div class="casino-title">🃏 21</div>
+        <button class="neon-btn" onclick="startBlackjack()">ВЗЯТЬ КАРТЫ</button>
+        <button class="neon-btn" onclick="blackjackStand()">СТОП</button>
+        <p id="blackjackInfo"></p>
     </div>
 
     <p id="gambleResult" style="margin-top:15px;"></p>
@@ -251,7 +315,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/hodilkabrodilka.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Мерседес</b>
@@ -265,7 +329,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mersedes.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Физик</b>
@@ -279,7 +343,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/fizik.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Агаааааа</b>
@@ -293,7 +357,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/agaaa.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Иистоооорииик</b>
@@ -307,7 +371,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/istorik.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Жанна Киска</b>
@@ -321,7 +385,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/jannakiska.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Мох-Ирева</b>
@@ -335,7 +399,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/moxireva.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Дикая троица</b>
@@ -349,7 +413,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/troica.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Мишук</b>
@@ -363,7 +427,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/mishyk.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>ШЕВА</b>
@@ -377,7 +441,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/sheva.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Артемий</b>
@@ -391,7 +455,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/tema.jpg'
         )">В БОЙ</button>
     </div>
-    
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>Игорюня</b>
@@ -405,6 +469,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/igor.jpg'
         )">В БОЙ</button>
     </div>
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>ДЕМЕНТИЙ</b>
@@ -418,6 +483,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/demaa.jpg'
         )">В БОЙ</button>
     </div>
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>БИГБОН</b>
@@ -431,6 +497,7 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/bigbon.jpg'
         )">В БОЙ</button>
     </div>
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>БИГБООООН В ПРАЙМЕ</b>
@@ -444,7 +511,35 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/bigbontwo.jpg'
         )">В БОЙ</button>
     </div>
-
+    <div class="boss-separator"></div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>БИГБОН НА СВИДАНИЕ УДУМАЛ</b>
+            <small>HP: 1 000 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 50 000 000</small>
+            <small>ОН В ПРАЙМЕ И КУШАЕТ ПЕЧЕНЬЕ.</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'БИГБОН НА СВИДАНИЕ УДУМАЛ',1000000,50000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/bigbob.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-separator"></div>
+    <div class="boss-card">
+        <div class="boss-info">
+            <b>ПРИНЦЕССА</b>
+            <small>HP: 3 000 000</small>
+            <small>Вход: 100 000</small>
+            <small>Награда: 50 000 000</small>
+            <small>ГОТОВИТ БАЛАНДУ.</small>
+        </div>
+        <button class="neon-btn" onclick="startBossFight(
+            'ПРИНЦЕССА',3000000,50000000,100000,
+            'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/princessa.jpg'
+        )">В БОЙ</button>
+    </div>
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>ЧОПОР</b>
@@ -458,16 +553,17 @@ body {
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/chopor.jpg'
         )">В БОЙ</button>
     </div>
+    <div class="boss-separator"></div>
     <div class="boss-card">
         <div class="boss-info">
             <b>ЧОПОР В ПРАЙМЕ</b>
-            <small>HP: 3 000 000 000 000 000 000 000</small>
+            <small>HP: 3 000 000 000 000</small>
             <small>Вход: 50 000 000</small>
-            <small>Награда: 999 000 000 000</small>
+            <small>Награда: 999 999 999 999</small>
             <small>МЯЯЯЯЯЧ СЮДАААААА.</small>
         </div>
         <button class="neon-btn" onclick="startBossFight(
-            'ЧОПОР В ПРАЙМЕ',3000000000000000000000,999000000000,50000000,
+            'ЧОПОР В ПРАЙМЕ',3000000000000,999999999999,50000000,
             'https://raw.githubusercontent.com/bmrzzmrb/TapikTap/main/chopor.jpg'
         )">В БОЙ</button>
     </div>
@@ -580,6 +676,91 @@ function playGamble(color) {
     saveGame();
 }
 
+function playSlots() {
+    if (currentBet <= 0 || currentBet > balance) {
+        tg.showAlert('Ставка не выбрана');
+        return;
+    }
+
+    balance -= currentBet;
+
+    const symbols = ['🍒', '🍋', '🔔', '💎'];
+    const a = symbols[Math.floor(Math.random()*symbols.length)];
+    const b = symbols[Math.floor(Math.random()*symbols.length)];
+    const c = symbols[Math.floor(Math.random()*symbols.length)];
+
+    let text = a + ' | ' + b + ' | ' + c;
+
+    if (a === b && b === c) {
+        const win = currentBet * 5;
+        balance += win;
+        text += `<br><b>🎉 ДЖЕКПОТ +${formatNumber(win)}</b>`;
+    } else if (a === b || b === c || a === c) {
+        const win = currentBet * 2;
+        balance += win;
+        text += `<br><b>✅ Выигрыш +${formatNumber(win)}</b>`;
+    } else {
+        text += `<br><b>❌ Проигрыш</b>`;
+    }
+
+    document.getElementById('slotResult').innerHTML = text;
+    currentBet = 0;
+    updateUI();
+    updateGambleUI();
+    saveGame();
+}
+
+let playerScore = 0;
+let dealerScore = 0;
+let blackjackActive = false;
+
+function drawCard() {
+    return Math.floor(Math.random() * 10) + 2;
+}
+
+function startBlackjack() {
+    if (currentBet <= 0 || currentBet > balance) {
+        tg.showAlert('Ставка не выбрана');
+        return;
+    }
+
+    balance -= currentBet;
+    playerScore = drawCard() + drawCard();
+    dealerScore = drawCard();
+    blackjackActive = true;
+
+    updateBlackjackInfo();
+}
+
+function blackjackStand() {
+    if (!blackjackActive) return;
+
+    dealerScore += drawCard();
+
+    let text = '';
+    if (playerScore > 21) {
+        text = '❌ Перебор';
+    } else if (dealerScore > 21 || playerScore > dealerScore) {
+        const win = currentBet * 2;
+        balance += win;
+        text = '🎉 Победа +' + formatNumber(win);
+    } else {
+        text = '❌ Проигрыш';
+    }
+
+    blackjackActive = false;
+    currentBet = 0;
+    document.getElementById('blackjackInfo').innerHTML += `<br><b>${text}</b>`;
+    updateUI();
+    updateGambleUI();
+    saveGame();
+}
+
+function updateBlackjackInfo() {
+    document.getElementById('blackjackInfo').innerHTML =
+        `Ты: ${playerScore}<br>Дилер: ${dealerScore}`;
+}
+
 function isClickBlocked() {
     const now = Date.now();
 
@@ -685,17 +866,34 @@ let musicOn = false;
 const bgMusic = document.getElementById('bgMusic');
 const musicBtn = document.getElementById('musicBtn');
 
+// важно
+bgMusic.volume = 0.5;
+bgMusic.muted = true; // стартуем заглушённым
+
 function toggleMusic() {
     if (!musicOn) {
-        bgMusic.play().catch(err => console.log('Ошибка воспроизведения:', err));
-        musicBtn.style.background = 'linear-gradient(135deg, #00ff00, #007700)';
-        musicBtn.style.boxShadow = '0 0 25px #00ff00';
-        musicOn = true;
+        bgMusic.muted = false;
+
+        const playPromise = bgMusic.play();
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    musicOn = true;
+                    musicBtn.innerText = '🔊 Музыка ВКЛ';
+                    musicBtn.style.background = 'linear-gradient(135deg, #00ff00, #007700)';
+                    musicBtn.style.boxShadow = '0 0 25px #00ff00';
+                })
+                .catch(err => {
+                    console.log('Play error:', err);
+                    tg.showAlert('❌ Нажми ещё раз для запуска музыки');
+                });
+        }
     } else {
         bgMusic.pause();
+        musicOn = false;
+        musicBtn.innerText = '🎵 Музыка ВЫКЛ';
         musicBtn.style.background = 'linear-gradient(135deg, #ff0000, #7a0000)';
         musicBtn.style.boxShadow = '0 0 25px rgba(255,0,0,0.9)';
-        musicOn = false;
     }
 }
 
